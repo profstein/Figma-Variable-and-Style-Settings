@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Website Token Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Figma Variables Prep</p>
+          <h1>Website design token starter</h1>
+          <p class="intro">
+            This form helps you define a small design token system for your
+            website. You will use these values later when creating variables
+            and styles in Figma.
+          </p>
+          <div class="note-stack">
+            <p>
+              Semantic naming is preferred because the role stays stable even
+              if the actual font or color changes.
+            </p>
+            <p>
+              Choose fonts from Google Fonts when possible, since those are
+              also commonly available in Figma. Write the font name with the
+              exact spelling so your variable values match correctly later.
+            </p>
+            <p>
+              Choose accessible, readable text and background combinations so
+              your website is easier to use.
+            </p>
+            <p>
+              In Figma, variables store values. Styles apply those values in
+              actual text and UI elements.
+            </p>
+          </div>
+        </div>
+
+        <aside class="hero-card">
+          <h2>How to use this</h2>
+          <ol>
+            <li>Pick a small set of fonts and colors for your website.</li>
+            <li>Use Google Fonts and record each font name exactly as written.</li>
+            <li>Keep names role-based, like primary text or heading font.</li>
+            <li>Copy the export list when you are ready to build in Figma.</li>
+          </ol>
+        </aside>
+      </header>
+
+      <main class="app-layout">
+        <section class="form-panel">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">Step 1</p>
+              <h2>Define your token values</h2>
+            </div>
+            <button id="reset-button" class="ghost-button" type="button">
+              Reset form
+            </button>
+          </div>
+
+          <form id="token-form" novalidate>
+            <section class="form-section">
+              <div class="section-heading">
+                <div>
+                  <p class="section-kicker">Typography Tokens</p>
+                  <h3>Fonts for brand, headings, and body text</h3>
+                </div>
+                <p class="section-caption">
+                  Start typing a Google Font name and choose from the
+                  suggestions so the spelling matches what you will use in
+                  Figma.
+                </p>
+              </div>
+              <div id="typography-fields" class="field-grid"></div>
+            </section>
+
+            <section class="form-section">
+              <div class="section-heading">
+                <div>
+                  <p class="section-kicker">Color Tokens</p>
+                  <h3>Core website colors by role</h3>
+                </div>
+                <p class="section-caption">
+                  Use role-based names instead of naming tokens by exact color.
+                </p>
+              </div>
+              <div id="color-fields" class="field-grid"></div>
+            </section>
+
+            <section class="form-section">
+              <div class="section-heading optional-heading">
+                <div>
+                  <p class="section-kicker">Optional Tokens</p>
+                  <h3>Extra values you may want to define</h3>
+                </div>
+                <label class="toggle-row" for="optional-toggle">
+                  <input id="optional-toggle" type="checkbox" />
+                  <span>Show optional fields</span>
+                </label>
+              </div>
+              <div
+                id="optional-fields"
+                class="field-grid optional-fields"
+                hidden
+              ></div>
+            </section>
+          </form>
+        </section>
+
+        <aside class="preview-panel">
+          <section class="summary-card">
+            <div class="panel-header">
+              <div>
+                <p class="section-kicker">Step 2</p>
+                <h2>Live summary</h2>
+              </div>
+            </div>
+
+            <div class="preview-block">
+              <h3>Typography preview</h3>
+              <div id="typography-preview" class="type-preview-stack"></div>
+            </div>
+
+            <div class="preview-block">
+              <div class="subheading-row">
+                <h3>Token summary</h3>
+                <span id="token-count" class="count-pill">0 tokens</span>
+              </div>
+              <div id="summary-list" class="summary-list"></div>
+            </div>
+
+            <div class="preview-block">
+              <div class="subheading-row">
+                <h3>Accessibility hints</h3>
+              </div>
+              <div id="contrast-hints" class="hint-list"></div>
+            </div>
+          </section>
+
+          <section class="summary-card preview-card-section">
+            <div class="subheading-row">
+              <h2>Sample website card</h2>
+            </div>
+            <div id="website-preview" class="website-preview">
+              <p class="preview-brand">Studio North</p>
+              <h3 class="preview-title">Design with a clear visual system</h3>
+              <p class="preview-body">
+                This sample card updates with your chosen fonts and core color
+                tokens so you can check the overall feel before building in
+                Figma.
+              </p>
+              <a href="#" class="preview-action">Primary action</a>
+            </div>
+          </section>
+
+          <section class="summary-card">
+              <div class="subheading-row export-toolbar">
+              <div>
+                <p class="section-kicker">Step 3</p>
+                <h2>Export tokens</h2>
+              </div>
+              <div class="toolbar-actions">
+                <label for="export-mode" class="visually-hidden">
+                  Export format
+                </label>
+                <select id="export-mode">
+                  <option value="plain">Plain list</option>
+                  <option value="grouped">Grouped list</option>
+                </select>
+                <button id="copy-button" class="primary-button" type="button">
+                  Copy export
+                </button>
+              </div>
+            </div>
+            <textarea
+              id="export-output"
+              class="export-output"
+              readonly
+              aria-label="Exported design tokens"
+            ></textarea>
+          </section>
+
+          <section class="summary-card">
+            <div class="subheading-row">
+              <div>
+                <p class="section-kicker">Step 4</p>
+                <h2>Build variables in Figma</h2>
+              </div>
+            </div>
+            <div class="instruction-list">
+              <div class="instruction-item">
+                <p class="mapping-token">1. Create collections</p>
+                <p>
+                  In Figma, open Variables and make a collection for
+                  typography tokens and another for color tokens.
+                </p>
+              </div>
+              <div class="instruction-item">
+                <p class="mapping-token">2. Add token names exactly</p>
+                <p>
+                  Create each variable using the token name shown here, such as
+                  `font.family.heading` or `color.text.primary`.
+                </p>
+              </div>
+              <div class="instruction-item">
+                <p class="mapping-token">3. Enter values carefully</p>
+                <p>
+                  Paste or type the matching value for each token. Font names
+                  should use the exact Google Fonts spelling, including spaces.
+                </p>
+              </div>
+              <div class="instruction-item">
+                <p class="mapping-token">4. Turn variables into styles</p>
+                <p>
+                  After your variables are set, make text styles and color
+                  styles in Figma that use these variable values in real UI
+                  elements.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="summary-card">
+            <div class="subheading-row">
+              <h2>Likely Figma collections</h2>
+            </div>
+            <div class="mapping-list">
+              <div class="mapping-item">
+                <p class="mapping-token">Typography collection</p>
+                <p>
+                  Add your `font.family.*` values to a typography-related
+                  variable collection, then make text styles for headings and
+                  body text.
+                </p>
+              </div>
+              <div class="mapping-item">
+                <p class="mapping-token">Color collection</p>
+                <p>
+                  Add your `color.*` values to a color variable collection, then
+                  apply them in color styles or directly in components.
+                </p>
+              </div>
+              <div class="mapping-item">
+                <p class="mapping-token">Future collections</p>
+                <p>
+                  You can expand this system later with spacing, radius, shadow,
+                  or image treatment tokens.
+                </p>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <template id="font-field-template">
+      <article class="token-card">
+        <div class="token-meta">
+          <span class="token-name"></span>
+          <h4 class="token-label"></h4>
+          <p class="token-help"></p>
+        </div>
+        <label class="field-label">
+          <span>Value</span>
+          <input class="token-input font-input" type="text" autocomplete="off" />
+        </label>
+        <p class="validation-message font-validation-message" aria-live="polite"></p>
+      </article>
+    </template>
+
+    <template id="color-field-template">
+      <article class="token-card">
+        <div class="token-meta">
+          <span class="token-name"></span>
+          <h4 class="token-label"></h4>
+          <p class="token-help"></p>
+        </div>
+        <div class="color-input-row">
+          <label class="field-label color-picker-label">
+            <span>Pick color</span>
+            <input class="token-input color-picker" type="color" />
+          </label>
+          <label class="field-label hex-field-label">
+            <span>Hex value</span>
+            <input
+              class="token-input hex-input"
+              type="text"
+              inputmode="text"
+              spellcheck="false"
+            />
+          </label>
+        </div>
+        <p class="validation-message" aria-live="polite"></p>
+      </article>
+    </template>
+
+    <datalist id="google-font-options"></datalist>
+
+    <script src="app.js"></script>
+  </body>
+</html>
