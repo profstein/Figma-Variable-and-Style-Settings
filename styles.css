@@ -145,11 +145,18 @@ h3 {
 .note-stack p,
 .hero-card li,
 .section-caption,
+.catalog-status,
 .token-help,
 .mapping-item p,
 .hint-card p,
 .field-label span {
   color: var(--muted);
+}
+
+.catalog-status {
+  margin: 8px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
 .hero-card h2 {

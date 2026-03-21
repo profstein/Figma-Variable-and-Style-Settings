@@ -108,7 +108,7 @@ const tokenGroups = [
   { key: "optional", title: "Optional", tokens: optionalTokens },
 ];
 const optionalTokenNames = new Set(optionalTokens.map((token) => token.name));
-const googleFontSuggestions = [
+const fallbackGoogleFontSuggestions = [
   "Abril Fatface",
   "Alegreya",
   "Archivo",
@@ -161,9 +161,8 @@ const googleFontSuggestions = [
   "Syne",
   "Work Sans",
 ];
-const googleFontLookup = new Map(
-  googleFontSuggestions.map((fontName) => [normalizeFontKey(fontName), fontName])
-);
+let googleFontSuggestions = [...fallbackGoogleFontSuggestions];
+let googleFontLookup = new Map();
 const fontValidationTimers = new Map();
 const fontLoadPromises = new Map();
 const fontLoadResults = new Map();
@@ -174,9 +173,11 @@ const state = {
   enabledOptional: false,
   exportMode: "plain",
   fontStatuses: {},
+  fontCatalogStatus: "Loading local Google Fonts catalog...",
 };
 
 const fontContainer = document.querySelector("#typography-fields");
+const fontCatalogStatus = document.querySelector("#font-catalog-status");
 const colorContainer = document.querySelector("#color-fields");
 const optionalContainer = document.querySelector("#optional-fields");
 const optionalToggle = document.querySelector("#optional-toggle");
@@ -191,8 +192,13 @@ const resetButton = document.querySelector("#reset-button");
 const websitePreview = document.querySelector("#website-preview");
 const previewAction = websitePreview.querySelector(".preview-action");
 const fontDatalist = document.querySelector("#google-font-options");
+const localGoogleFontCatalog = Array.isArray(window.GOOGLE_FONTS_CATALOG)
+  ? window.GOOGLE_FONTS_CATALOG
+  : null;
 
 function initializeState() {
+  refreshGoogleFontLookup();
+
   tokenGroups.forEach((group) => {
     group.tokens.forEach((token) => {
       state.values[token.name] = token.defaultValue;
@@ -205,6 +211,12 @@ function initializeState() {
       message: "Loading Google Font preview...",
     };
   });
+}
+
+function refreshGoogleFontLookup() {
+  googleFontLookup = new Map(
+    googleFontSuggestions.map((fontName) => [normalizeFontKey(fontName), fontName])
+  );
 }
 
 function renderFontFields(tokens, container) {
@@ -266,6 +278,20 @@ function populateFontDatalist() {
 
   fontDatalist.innerHTML = "";
   fontDatalist.appendChild(options);
+}
+
+function fetchGoogleFontsCatalog() {
+  if (localGoogleFontCatalog && localGoogleFontCatalog.length > 0) {
+    googleFontSuggestions = [...new Set(localGoogleFontCatalog)].sort((left, right) =>
+      left.localeCompare(right)
+    );
+    refreshGoogleFontLookup();
+    state.fontCatalogStatus = `Loaded ${googleFontSuggestions.length} Google Fonts from the local catalog file.`;
+    return;
+  }
+
+  state.fontCatalogStatus =
+    "Could not load the local Google Fonts catalog. Using the fallback font list instead.";
 }
 
 function renderColorFields(tokens, container) {
@@ -635,6 +661,10 @@ function updateSummary() {
   tokenCount.textContent = `${activeTokens.length} token${activeTokens.length === 1 ? "" : "s"}`;
 }
 
+function updateFontCatalogStatus() {
+  fontCatalogStatus.textContent = state.fontCatalogStatus;
+}
+
 function updateFontValidationMessages() {
   typographyTokens.forEach((token) => {
     const card = document.querySelector(`.token-card[data-token="${token.name}"]`);
@@ -859,6 +889,7 @@ function updateOptionalVisibility() {
 
 function updateUI() {
   updateOptionalVisibility();
+  updateFontCatalogStatus();
   updateFontValidationMessages();
   updateSummary();
   updateTypographyPreview();
@@ -935,6 +966,7 @@ function bindControls() {
 
 function init() {
   initializeState();
+  fetchGoogleFontsCatalog();
   populateFontDatalist();
   renderFontFields(typographyTokens, fontContainer);
   renderColorFields(colorTokens, colorContainer);
