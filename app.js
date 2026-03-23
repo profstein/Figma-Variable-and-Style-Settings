@@ -1,27 +1,17 @@
-// Token definitions stay data-driven so new groups can be added later.
 const typographyTokens = [
   {
     name: "font.family.brand",
     label: "Site Name / Brand Font",
-    help: "The font used for the site name, logo text, or branded title.",
-    type: "font",
-    placeholder: "Playfair Display",
     defaultValue: "Playfair Display",
   },
   {
     name: "font.family.heading",
     label: "Heading Font",
-    help: "The main font used for page headings and section headings.",
-    type: "font",
-    placeholder: "Inter",
     defaultValue: "Inter",
   },
   {
     name: "font.family.body",
     label: "Body Font",
-    help: "The font used for paragraph text and most reading text.",
-    type: "font",
-    placeholder: "Source Sans 3",
     defaultValue: "Source Sans 3",
   },
 ];
@@ -30,50 +20,36 @@ const colorTokens = [
   {
     name: "color.text.primary",
     label: "Primary Text",
-    help: "The main text color used for most body copy and headings.",
-    type: "color",
     defaultValue: "#1F1F1F",
-  },
-  {
-    name: "color.text.secondary",
-    label: "Secondary Text",
-    help: "A less prominent text color for supporting information.",
-    type: "color",
-    defaultValue: "#5A5A5A",
   },
   {
     name: "color.background.primary",
     label: "Primary Background",
-    help: "The main page background color.",
-    type: "color",
     defaultValue: "#FAFAF7",
+  },
+  {
+    name: "color.text.secondary",
+    label: "Secondary Text",
+    defaultValue: "#5A5A5A",
   },
   {
     name: "color.background.secondary",
     label: "Secondary Background",
-    help: "A background color for cards, sections, or panels.",
-    type: "color",
     defaultValue: "#F1EFEA",
   },
   {
     name: "color.action.primary",
     label: "Primary Action",
-    help: "The main interactive color for buttons and important links.",
-    type: "color",
     defaultValue: "#2F6FED",
   },
   {
     name: "color.action.hover",
     label: "Action Hover",
-    help: "The hover state for buttons or interactive links.",
-    type: "color",
     defaultValue: "#1E56C5",
   },
   {
     name: "color.accent",
     label: "Accent / Highlight",
-    help: "A color used sparingly for emphasis, highlights, or small visual accents.",
-    type: "color",
     defaultValue: "#D97706",
   },
 ];
@@ -82,31 +58,20 @@ const optionalTokens = [
   {
     name: "color.border.subtle",
     label: "Subtle Border",
-    help: "A light border or divider color.",
-    type: "color",
     defaultValue: "#D8D1C7",
   },
   {
     name: "color.text.inverse",
     label: "Inverse Text",
-    help: "Text used on dark or strong colored backgrounds.",
-    type: "color",
     defaultValue: "#F9F7F2",
   },
   {
     name: "color.background.inverse",
     label: "Inverse Background",
-    help: "A dark or contrasting background used for emphasis sections.",
-    type: "color",
     defaultValue: "#20242D",
   },
 ];
 
-const tokenGroups = [
-  { key: "typography", title: "Typography", tokens: typographyTokens },
-  { key: "color", title: "Color", tokens: colorTokens },
-  { key: "optional", title: "Optional", tokens: optionalTokens },
-];
 const optionalTokenNames = new Set(optionalTokens.map((token) => token.name));
 const fallbackGoogleFontSuggestions = [
   "Abril Fatface",
@@ -161,7 +126,8 @@ const fallbackGoogleFontSuggestions = [
   "Syne",
   "Work Sans",
 ];
-let googleFontSuggestions = [...fallbackGoogleFontSuggestions];
+
+let googleFontSuggestions = [];
 let googleFontLookup = new Map();
 const fontValidationTimers = new Map();
 const fontLoadPromises = new Map();
@@ -176,11 +142,9 @@ const state = {
   fontCatalogStatus: "Loading local Google Fonts catalog...",
 };
 
-const fontContainer = document.querySelector("#typography-fields");
-const fontCatalogStatus = document.querySelector("#font-catalog-status");
-const colorContainer = document.querySelector("#color-fields");
-const optionalContainer = document.querySelector("#optional-fields");
+const tokenForm = document.querySelector("#token-form");
 const optionalToggle = document.querySelector("#optional-toggle");
+const optionalContainer = document.querySelector("#optional-fields");
 const exportModeSelect = document.querySelector("#export-mode");
 const exportOutput = document.querySelector("#export-output");
 const summaryList = document.querySelector("#summary-list");
@@ -192,25 +156,52 @@ const resetButton = document.querySelector("#reset-button");
 const websitePreview = document.querySelector("#website-preview");
 const previewAction = websitePreview.querySelector(".preview-action");
 const fontDatalist = document.querySelector("#google-font-options");
+const fontCatalogStatus = document.querySelector("#font-catalog-status");
+const rootStyles = document.documentElement.style;
 const localGoogleFontCatalog = Array.isArray(window.GOOGLE_FONTS_CATALOG)
   ? window.GOOGLE_FONTS_CATALOG
   : null;
 
-function initializeState() {
-  refreshGoogleFontLookup();
+function getFontInput(tokenName) {
+  return document.querySelector(`.font-input[data-token="${tokenName}"]`);
+}
 
-  tokenGroups.forEach((group) => {
-    group.tokens.forEach((token) => {
-      state.values[token.name] = token.defaultValue;
-    });
-  });
+function getColorPicker(tokenName) {
+  return document.querySelector(`.color-picker[data-token="${tokenName}"]`);
+}
 
-  typographyTokens.forEach((token) => {
-    state.fontStatuses[token.name] = {
-      tone: "loading",
-      message: "Loading Google Font preview...",
-    };
-  });
+function getHexInput(tokenName) {
+  return document.querySelector(`.hex-input[data-token="${tokenName}"]`);
+}
+
+function getTokenMessage(tokenName) {
+  return document.querySelector(`[data-token-message="${tokenName}"]`);
+}
+
+function normalizeHex(value) {
+  const cleaned = value.startsWith("#") ? value : `#${value}`;
+  return cleaned.toUpperCase();
+}
+
+function isValidHex(value) {
+  return /^#?([0-9a-fA-F]{6})$/.test(value);
+}
+
+function normalizeFontWhitespace(value) {
+  return value.trim().replace(/\s+/g, " ");
+}
+
+function normalizeFontKey(value) {
+  return normalizeFontWhitespace(value).toLowerCase();
+}
+
+function buildGoogleFontStylesheetUrl(fontName) {
+  const encodedFamily = encodeURIComponent(fontName).replace(/%20/g, "+");
+  return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@400;500;600;700&display=swap`;
+}
+
+function formatPreviewFontFamily(value, fallbackGeneric) {
+  return value ? `"${value}", ${fallbackGeneric}` : fallbackGeneric;
 }
 
 function refreshGoogleFontLookup() {
@@ -219,52 +210,19 @@ function refreshGoogleFontLookup() {
   );
 }
 
-function renderFontFields(tokens, container) {
-  const template = document.querySelector("#font-field-template");
+function loadGoogleFontsCatalog() {
+  if (localGoogleFontCatalog && localGoogleFontCatalog.length > 0) {
+    googleFontSuggestions = [...new Set(localGoogleFontCatalog)].sort((left, right) =>
+      left.localeCompare(right)
+    );
+    state.fontCatalogStatus = `Loaded ${googleFontSuggestions.length} Google Fonts from the local catalog file.`;
+  } else {
+    googleFontSuggestions = [...fallbackGoogleFontSuggestions];
+    state.fontCatalogStatus =
+      "Could not load the local Google Fonts catalog. Using the fallback font list instead.";
+  }
 
-  tokens.forEach((token) => {
-    const fragment = template.content.cloneNode(true);
-    const card = fragment.querySelector(".token-card");
-    const nameNode = fragment.querySelector(".token-name");
-    const labelNode = fragment.querySelector(".token-label");
-    const helpNode = fragment.querySelector(".token-help");
-    const input = fragment.querySelector(".font-input");
-    const validation = fragment.querySelector(".font-validation-message");
-
-    card.dataset.token = token.name;
-    nameNode.textContent = token.name;
-    labelNode.textContent = token.label;
-    helpNode.textContent = token.help;
-    input.placeholder = token.placeholder;
-    input.value = state.values[token.name];
-    input.id = token.name;
-    input.setAttribute("list", "google-font-options");
-    validation.textContent = state.fontStatuses[token.name].message;
-    validation.classList.add(state.fontStatuses[token.name].tone);
-
-    input.addEventListener("input", (event) => {
-      state.values[token.name] = normalizeFontWhitespace(event.target.value);
-      setFontStatusFromInput(token.name);
-      scheduleFontValidation(token.name);
-      updateUI();
-    });
-
-    input.addEventListener("change", (event) => {
-      const canonicalName = getCanonicalGoogleFontName(event.target.value);
-
-      if (canonicalName) {
-        event.target.value = canonicalName;
-        state.values[token.name] = canonicalName;
-      } else {
-        state.values[token.name] = normalizeFontWhitespace(event.target.value);
-      }
-
-      validateFontToken(token.name);
-      updateUI();
-    });
-
-    container.appendChild(fragment);
-  });
+  refreshGoogleFontLookup();
 }
 
 function populateFontDatalist() {
@@ -280,88 +238,26 @@ function populateFontDatalist() {
   fontDatalist.appendChild(options);
 }
 
-function fetchGoogleFontsCatalog() {
-  if (localGoogleFontCatalog && localGoogleFontCatalog.length > 0) {
-    googleFontSuggestions = [...new Set(localGoogleFontCatalog)].sort((left, right) =>
-      left.localeCompare(right)
-    );
-    refreshGoogleFontLookup();
-    state.fontCatalogStatus = `Loaded ${googleFontSuggestions.length} Google Fonts from the local catalog file.`;
-    return;
-  }
+function syncStateFromDom() {
+  state.enabledOptional = optionalToggle.checked;
+  state.exportMode = exportModeSelect.value;
 
-  state.fontCatalogStatus =
-    "Could not load the local Google Fonts catalog. Using the fallback font list instead.";
-}
+  typographyTokens.forEach((token) => {
+    state.values[token.name] = normalizeFontWhitespace(getFontInput(token.name).value);
+  });
 
-function renderColorFields(tokens, container) {
-  const template = document.querySelector("#color-field-template");
-
-  tokens.forEach((token) => {
-    const fragment = template.content.cloneNode(true);
-    const card = fragment.querySelector(".token-card");
-    const nameNode = fragment.querySelector(".token-name");
-    const labelNode = fragment.querySelector(".token-label");
-    const helpNode = fragment.querySelector(".token-help");
-    const picker = fragment.querySelector(".color-picker");
-    const hexInput = fragment.querySelector(".hex-input");
-    const validation = fragment.querySelector(".validation-message");
-
-    card.dataset.token = token.name;
-    nameNode.textContent = token.name;
-    labelNode.textContent = token.label;
-    helpNode.textContent = token.help;
-    picker.value = state.values[token.name];
-    hexInput.value = state.values[token.name];
-    hexInput.placeholder = "#A1B2C3";
-    hexInput.id = token.name;
-
-    picker.addEventListener("input", (event) => {
-      const normalized = normalizeHex(event.target.value);
-      state.values[token.name] = normalized;
-      hexInput.value = normalized;
-      validation.textContent = "";
-      updateUI();
-    });
-
-    hexInput.addEventListener("input", (event) => {
-      const rawValue = event.target.value.trim();
-      state.values[token.name] = rawValue;
-
-      if (isValidHex(rawValue)) {
-        const normalized = normalizeHex(rawValue);
-        state.values[token.name] = normalized;
-        picker.value = normalized;
-        hexInput.value = normalized;
-        validation.textContent = "";
-      } else if (rawValue.length === 0) {
-        validation.textContent = "Enter a hex value such as #1F1F1F.";
-      } else {
-        validation.textContent = "Use a valid 6-digit hex value such as #1F1F1F.";
-      }
-
-      updateUI();
-    });
-
-    container.appendChild(fragment);
+  [...colorTokens, ...optionalTokens].forEach((token) => {
+    state.values[token.name] = getHexInput(token.name).value.trim();
   });
 }
 
-function isValidHex(value) {
-  return /^#?([0-9a-fA-F]{6})$/.test(value);
-}
-
-function normalizeHex(value) {
-  const cleaned = value.startsWith("#") ? value : `#${value}`;
-  return cleaned.toUpperCase();
-}
-
-function normalizeFontWhitespace(value) {
-  return value.trim().replace(/\s+/g, " ");
-}
-
-function normalizeFontKey(value) {
-  return normalizeFontWhitespace(value).toLowerCase();
+function initializeFontStatuses() {
+  typographyTokens.forEach((token) => {
+    state.fontStatuses[token.name] = {
+      tone: "loading",
+      message: "Loading Google Font preview...",
+    };
+  });
 }
 
 function getCanonicalGoogleFontName(value) {
@@ -379,28 +275,6 @@ function getMatchingGoogleFonts(value) {
     const key = normalizeFontKey(fontName);
     return key.startsWith(query) || key.includes(query);
   });
-}
-
-function getSuggestedGoogleFontName(value) {
-  const query = normalizeFontKey(value);
-
-  if (!query) {
-    return null;
-  }
-
-  let bestFont = null;
-  let bestDistance = Number.POSITIVE_INFINITY;
-
-  googleFontSuggestions.forEach((fontName) => {
-    const distance = getEditDistance(query, normalizeFontKey(fontName));
-
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestFont = fontName;
-    }
-  });
-
-  return bestDistance <= 4 ? bestFont : null;
 }
 
 function getEditDistance(source, target) {
@@ -430,21 +304,34 @@ function getEditDistance(source, target) {
   return matrix[source.length][target.length];
 }
 
-function buildGoogleFontStylesheetUrl(fontName) {
-  const encodedFamily = encodeURIComponent(fontName).replace(/%20/g, "+");
-  return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@400;500;600;700&display=swap`;
-}
+function getSuggestedGoogleFontName(value) {
+  const query = normalizeFontKey(value);
 
-function formatPreviewFontFamily(value, fallbackGeneric) {
-  return value ? `"${value}", ${fallbackGeneric}` : fallbackGeneric;
+  if (!query) {
+    return null;
+  }
+
+  let bestFont = null;
+  let bestDistance = Number.POSITIVE_INFINITY;
+
+  googleFontSuggestions.forEach((fontName) => {
+    const distance = getEditDistance(query, normalizeFontKey(fontName));
+
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestFont = fontName;
+    }
+  });
+
+  return bestDistance <= 4 ? bestFont : null;
 }
 
 function setFontStatus(tokenName, tone, message) {
   state.fontStatuses[tokenName] = { tone, message };
 }
 
-function setFontStatusFromInput(tokenName) {
-  const value = state.values[tokenName];
+function setFontStatusFromInput(tokenName, rawValue) {
+  const value = normalizeFontWhitespace(rawValue);
 
   if (!value) {
     setFontStatus(
@@ -460,9 +347,7 @@ function setFontStatusFromInput(tokenName) {
     return;
   }
 
-  const closeMatches = getMatchingGoogleFonts(value);
-
-  if (closeMatches.length > 0) {
+  if (getMatchingGoogleFonts(value).length > 0) {
     setFontStatus(
       tokenName,
       "loading",
@@ -471,11 +356,7 @@ function setFontStatusFromInput(tokenName) {
     return;
   }
 
-  setFontStatus(
-    tokenName,
-    "loading",
-    "Checking Google Fonts for this spelling..."
-  );
+  setFontStatus(tokenName, "loading", "Checking Google Fonts for this spelling...");
 }
 
 function loadGoogleFont(fontName) {
@@ -508,7 +389,7 @@ function loadGoogleFont(fontName) {
           ]);
         }
       } catch (error) {
-        // If the stylesheet loaded, keep the preview usable even if the FontFaceSet API is unavailable.
+        // Keep the preview usable even if FontFaceSet is unavailable.
       }
 
       resolve({ ok: true, fontName: normalizedName });
@@ -542,7 +423,9 @@ function scheduleFontValidation(tokenName) {
 }
 
 function validateFontToken(tokenName) {
-  const value = state.values[tokenName];
+  const input = getFontInput(tokenName);
+  const value = normalizeFontWhitespace(input.value);
+  input.value = value;
 
   if (!value) {
     setFontStatus(
@@ -572,7 +455,7 @@ function validateFontToken(tokenName) {
   fontRequestIds.set(tokenName, requestId);
 
   loadGoogleFont(requestedName).then((result) => {
-    const latestValue = state.values[tokenName];
+    const latestValue = normalizeFontWhitespace(getFontInput(tokenName).value);
 
     if (fontRequestIds.get(tokenName) !== requestId) {
       return;
@@ -605,12 +488,74 @@ function validateFontToken(tokenName) {
   });
 }
 
+function updateFontCatalogStatus() {
+  fontCatalogStatus.textContent = state.fontCatalogStatus;
+}
+
+function updateFontValidationMessages() {
+  typographyTokens.forEach((token) => {
+    const message = getTokenMessage(token.name);
+    const status = state.fontStatuses[token.name];
+
+    message.textContent = status.message;
+    message.className = "validation-message font-validation-message";
+
+    if (status.tone) {
+      message.classList.add(status.tone);
+    }
+  });
+}
+
 function getActiveTokens() {
   return [
     ...typographyTokens,
     ...colorTokens,
     ...(state.enabledOptional ? optionalTokens : []),
   ];
+}
+
+function updateOptionalVisibility() {
+  optionalContainer.hidden = !state.enabledOptional;
+}
+
+function getValidColor(name, fallback) {
+  if (!state.enabledOptional && optionalTokenNames.has(name)) {
+    return fallback;
+  }
+
+  const value = state.values[name];
+  return isValidHex(value) ? normalizeHex(value) : fallback;
+}
+
+function updateTokenCssVariables() {
+  rootStyles.setProperty(
+    "--token-font-body",
+    formatPreviewFontFamily(state.values["font.family.body"], '"Segoe UI", sans-serif')
+  );
+  rootStyles.setProperty(
+    "--token-color-text-primary",
+    getValidColor("color.text.primary", "#1F1F1F")
+  );
+  rootStyles.setProperty(
+    "--token-color-background-primary",
+    getValidColor("color.background.primary", "#FAFAF7")
+  );
+  rootStyles.setProperty(
+    "--token-color-text-secondary",
+    getValidColor("color.text.secondary", "#5A5A5A")
+  );
+  rootStyles.setProperty(
+    "--token-color-background-secondary",
+    getValidColor("color.background.secondary", "#F1EFEA")
+  );
+  rootStyles.setProperty(
+    "--token-color-action-primary",
+    getValidColor("color.action.primary", "#2F6FED")
+  );
+  rootStyles.setProperty(
+    "--token-color-text-inverse",
+    getValidColor("color.text.inverse", "#F9F7F2")
+  );
 }
 
 function updateSummary() {
@@ -638,7 +583,7 @@ function updateSummary() {
     const valueNode = document.createElement("div");
     valueNode.className = "summary-value";
 
-    if (token.type === "color" && isValidHex(value)) {
+    if (token.name.startsWith("color.") && isValidHex(value)) {
       const chip = document.createElement("span");
       chip.className = "color-chip";
       chip.style.backgroundColor = normalizeHex(value);
@@ -648,40 +593,16 @@ function updateSummary() {
     const valueText = document.createElement("span");
     valueText.textContent = value || "Not set";
 
-    if (token.type === "font" && value) {
+    if (token.name.startsWith("font.") && value) {
       valueText.style.fontFamily = formatPreviewFontFamily(value, "sans-serif");
     }
 
     valueNode.appendChild(valueText);
-
     item.append(main, valueNode);
     summaryList.appendChild(item);
   });
 
   tokenCount.textContent = `${activeTokens.length} token${activeTokens.length === 1 ? "" : "s"}`;
-}
-
-function updateFontCatalogStatus() {
-  fontCatalogStatus.textContent = state.fontCatalogStatus;
-}
-
-function updateFontValidationMessages() {
-  typographyTokens.forEach((token) => {
-    const card = document.querySelector(`.token-card[data-token="${token.name}"]`);
-    const message = card?.querySelector(".font-validation-message");
-    const status = state.fontStatuses[token.name];
-
-    if (!message || !status) {
-      return;
-    }
-
-    message.textContent = status.message;
-    message.className = "validation-message font-validation-message";
-
-    if (status.tone) {
-      message.classList.add(status.tone);
-    }
-  });
 }
 
 function updateTypographyPreview() {
@@ -731,40 +652,33 @@ function updateTypographyPreview() {
 
 function updateWebsitePreview() {
   const bgPrimary = getValidColor("color.background.primary", "#FAFAF7");
-  const bgSecondary = getValidColor("color.background.secondary", "#F1EFEA");
   const textPrimary = getValidColor("color.text.primary", "#1F1F1F");
-  const textSecondary = getValidColor("color.text.secondary", "#5A5A5A");
   const actionPrimary = getValidColor("color.action.primary", "#2F6FED");
-  const actionHover = getValidColor("color.action.hover", "#1E56C5");
   const brandFont = state.values["font.family.brand"] || "Fraunces";
   const headingFont = state.values["font.family.heading"] || "Manrope";
   const bodyFont = state.values["font.family.body"] || "Manrope";
 
-  websitePreview.style.background = `linear-gradient(180deg, ${bgPrimary} 0%, ${bgSecondary} 100%)`;
+  websitePreview.style.background = bgPrimary;
   websitePreview.style.color = textPrimary;
-  websitePreview.style.borderColor = getValidColor("color.border.subtle", "rgba(98, 82, 61, 0.16)");
+  websitePreview.style.borderColor = getValidColor(
+    "color.border.subtle",
+    "rgba(98, 82, 61, 0.16)"
+  );
 
   const brand = websitePreview.querySelector(".preview-brand");
   const title = websitePreview.querySelector(".preview-title");
   const body = websitePreview.querySelector(".preview-body");
+
   brand.style.fontFamily = formatPreviewFontFamily(brandFont, "serif");
-  brand.style.color = getValidColor("color.accent", actionPrimary);
+  brand.style.color = textPrimary;
   title.style.fontFamily = formatPreviewFontFamily(headingFont, "sans-serif");
   body.style.fontFamily = formatPreviewFontFamily(bodyFont, "sans-serif");
-  body.style.color = textSecondary;
+  title.style.color = textPrimary;
+  body.style.color = textPrimary;
   previewAction.style.backgroundColor = actionPrimary;
   previewAction.style.color = getValidColor("color.text.inverse", "#FFFFFF");
   previewAction.dataset.baseColor = actionPrimary;
-  previewAction.dataset.hoverColor = actionHover;
-}
-
-function getValidColor(name, fallback) {
-  if (!state.enabledOptional && optionalTokenNames.has(name)) {
-    return fallback;
-  }
-
-  const value = state.values[name];
-  return isValidHex(value) ? normalizeHex(value) : fallback;
+  previewAction.dataset.hoverColor = getValidColor("color.action.hover", "#1E56C5");
 }
 
 function toRgb(hex) {
@@ -802,23 +716,23 @@ function getContrastRatio(foreground, background) {
 }
 
 function updateContrastHints() {
-  contrastHints.innerHTML = "";
-
-  // Check the text/background pairs students are most likely to use first.
   const checks = [
     {
+      key: "primary-on-primary",
       title: "Primary text on primary background",
       foreground: getValidColor("color.text.primary", "#1F1F1F"),
       background: getValidColor("color.background.primary", "#FAFAF7"),
       recommended: 4.5,
     },
     {
-      title: "Secondary text on primary background",
+      key: "secondary-on-secondary",
+      title: "Secondary text on secondary background",
       foreground: getValidColor("color.text.secondary", "#5A5A5A"),
-      background: getValidColor("color.background.primary", "#FAFAF7"),
+      background: getValidColor("color.background.secondary", "#F1EFEA"),
       recommended: 4.5,
     },
     {
+      key: "inverse-on-action",
       title: "Inverse text on action color",
       foreground: getValidColor("color.text.inverse", "#FFFFFF"),
       background: getValidColor("color.action.primary", "#2F6FED"),
@@ -827,23 +741,27 @@ function updateContrastHints() {
   ];
 
   checks.forEach((check) => {
-    const card = document.createElement("article");
+    const card = contrastHints.querySelector(`[data-check="${check.key}"]`);
     const ratio = getContrastRatio(check.foreground, check.background);
     const passes = ratio >= check.recommended;
+    const badge = card.querySelector(".hint-badge");
+    const badgeIcon = card.querySelector(".hint-badge-icon");
+    const badgeLabel = card.querySelector(".hint-badge-label");
+    const title = card.querySelector(".hint-title");
+    const description = card.querySelector(".hint-description");
 
-    card.className = `hint-card ${passes ? "good" : "warning"}`;
+    card.classList.remove("good", "warning");
+    card.classList.add(passes ? "good" : "warning");
 
-    const title = document.createElement("p");
-    title.className = "hint-title";
+    badge.classList.remove("good", "warning");
+    badge.classList.add(passes ? "good" : "warning");
+
+    badgeIcon.textContent = passes ? "✓" : "✕";
+    badgeLabel.textContent = passes ? "Pass" : "Needs work";
     title.textContent = `${check.title}: ${ratio.toFixed(2)}:1`;
-
-    const text = document.createElement("p");
-    text.textContent = passes
+    description.textContent = passes
       ? "This pairing looks reasonably strong for normal-sized text."
       : "This pairing may be hard to read. Try increasing contrast between text and background.";
-
-    card.append(title, text);
-    contrastHints.appendChild(card);
   });
 }
 
@@ -883,11 +801,9 @@ function updateExportOutput() {
       : buildPlainExport(activeTokens);
 }
 
-function updateOptionalVisibility() {
-  optionalContainer.hidden = !state.enabledOptional;
-}
-
 function updateUI() {
+  syncStateFromDom();
+  updateTokenCssVariables();
   updateOptionalVisibility();
   updateFontCatalogStatus();
   updateFontValidationMessages();
@@ -898,34 +814,37 @@ function updateUI() {
   updateExportOutput();
 }
 
-function resetState() {
-  initializeState();
-  state.enabledOptional = false;
-  state.exportMode = "plain";
+function updateColorField(tokenName, nextValue) {
+  const hexInput = getHexInput(tokenName);
+  const picker = getColorPicker(tokenName);
+  const message = getTokenMessage(tokenName);
 
-  document.querySelectorAll(".font-input").forEach((input) => {
-    input.value = state.values[input.id];
+  hexInput.value = nextValue;
+
+  if (isValidHex(nextValue)) {
+    const normalized = normalizeHex(nextValue);
+    hexInput.value = normalized;
+    picker.value = normalized;
+    message.textContent = "";
+  } else if (nextValue.length === 0) {
+    message.textContent = "Enter a hex value such as #1F1F1F.";
+  } else {
+    message.textContent = "Use a valid 6-digit hex value such as #1F1F1F.";
+  }
+}
+
+function resetForm() {
+  tokenForm.reset();
+  initializeFontStatuses();
+
+  [...colorTokens, ...optionalTokens].forEach((token) => {
+    getTokenMessage(token.name).textContent = "";
   });
 
-  document.querySelectorAll(".token-card[data-token]").forEach((card) => {
-    const tokenName = card.dataset.token;
-    const colorPicker = card.querySelector(".color-picker");
-    const hexInput = card.querySelector(".hex-input");
-    const validation = card.querySelector(".validation-message");
-
-    if (colorPicker && hexInput) {
-      colorPicker.value = state.values[tokenName];
-      hexInput.value = state.values[tokenName];
-      validation.textContent = "";
-    }
-  });
-
-  optionalToggle.checked = false;
-  exportModeSelect.value = "plain";
   typographyTokens.forEach((token) => {
-    setFontStatus(token.name, "loading", "Loading Google Font preview...");
     validateFontToken(token.name);
   });
+
   updateUI();
 }
 
@@ -942,19 +861,51 @@ async function copyExport() {
   }, 1400);
 }
 
-function bindControls() {
-  optionalToggle.addEventListener("change", (event) => {
-    state.enabledOptional = event.target.checked;
+function handleFormInput(event) {
+  const target = event.target;
+
+  if (target.matches(".color-picker[data-token]")) {
+    updateColorField(target.dataset.token, normalizeHex(target.value));
     updateUI();
-  });
+    return;
+  }
 
-  exportModeSelect.addEventListener("change", (event) => {
-    state.exportMode = event.target.value;
-    updateExportOutput();
-  });
+  if (target.matches(".hex-input[data-token]")) {
+    updateColorField(target.dataset.token, target.value.trim());
+    updateUI();
+    return;
+  }
 
+  if (target.matches(".font-input[data-token]")) {
+    setFontStatusFromInput(target.dataset.token, target.value);
+    scheduleFontValidation(target.dataset.token);
+    updateUI();
+    return;
+  }
+
+  updateUI();
+}
+
+function handleFormChange(event) {
+  const target = event.target;
+
+  if (target.matches(".font-input[data-token]")) {
+    const normalized = normalizeFontWhitespace(target.value);
+    const canonicalName = getCanonicalGoogleFontName(normalized);
+    target.value = canonicalName || normalized;
+    validateFontToken(target.dataset.token);
+    updateUI();
+    return;
+  }
+
+  updateUI();
+}
+
+function bindControls() {
+  tokenForm.addEventListener("input", handleFormInput);
+  tokenForm.addEventListener("change", handleFormChange);
   copyButton.addEventListener("click", copyExport);
-  resetButton.addEventListener("click", resetState);
+  resetButton.addEventListener("click", resetForm);
   previewAction.addEventListener("click", (event) => event.preventDefault());
   previewAction.addEventListener("mouseenter", () => {
     previewAction.style.backgroundColor = previewAction.dataset.hoverColor;
@@ -964,16 +915,140 @@ function bindControls() {
   });
 }
 
+function dispatchInput(element) {
+  element.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function dispatchChange(element) {
+  element.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function assertTest(condition, message) {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
+function hexToRgbString(hex) {
+  const { r, g, b } = toRgb(hex);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function runInteractionTests() {
+  const defaults = {
+    brand: getFontInput("font.family.brand").value,
+    heading: getFontInput("font.family.heading").value,
+    body: getFontInput("font.family.body").value,
+    action: getHexInput("color.action.primary").value,
+    textPrimary: getHexInput("color.text.primary").value,
+    bgPrimary: getHexInput("color.background.primary").value,
+  };
+  const results = [];
+
+  try {
+    assertTest(
+      fontCatalogStatus.textContent.length > 0,
+      "font catalog status should not be empty"
+    );
+    results.push("catalog status");
+
+    getFontInput("font.family.brand").value = "Poppins";
+    dispatchInput(getFontInput("font.family.brand"));
+    dispatchChange(getFontInput("font.family.brand"));
+    getFontInput("font.family.heading").value = "Poppins";
+    dispatchInput(getFontInput("font.family.heading"));
+    dispatchChange(getFontInput("font.family.heading"));
+    getFontInput("font.family.body").value = "Poppins";
+    dispatchInput(getFontInput("font.family.body"));
+    dispatchChange(getFontInput("font.family.body"));
+    assertTest(
+      websitePreview.querySelector(".preview-brand").style.fontFamily.includes("Poppins"),
+      "sample website card should use chosen brand font"
+    );
+    assertTest(
+      websitePreview.querySelector(".preview-title").style.fontFamily.includes("Poppins"),
+      "sample website card should use chosen heading font"
+    );
+    assertTest(
+      websitePreview.querySelector(".preview-body").style.fontFamily.includes("Poppins"),
+      "sample website card should use chosen body font"
+    );
+    results.push("font previews");
+
+    getHexInput("color.action.primary").value = "#FF5500";
+    dispatchInput(getHexInput("color.action.primary"));
+    assertTest(
+      getColorPicker("color.action.primary").value.toUpperCase() === "#FF5500",
+      "hex and color picker should stay in sync"
+    );
+    assertTest(
+      getComputedStyle(previewAction).backgroundColor === hexToRgbString("#FF5500"),
+      "sample action button should use primary action color"
+    );
+    results.push("color sync");
+
+    getHexInput("color.text.primary").value = "#112233";
+    dispatchInput(getHexInput("color.text.primary"));
+    getHexInput("color.background.primary").value = "#F4F1EA";
+    dispatchInput(getHexInput("color.background.primary"));
+    assertTest(
+      getComputedStyle(websitePreview).backgroundColor === hexToRgbString("#F4F1EA"),
+      "sample website card should use primary background color"
+    );
+    assertTest(
+      getComputedStyle(websitePreview).color === hexToRgbString("#112233"),
+      "sample website card should use primary text color"
+    );
+    results.push("sample card colors");
+
+    assertTest(
+      getComputedStyle(
+        contrastHints.querySelector('[data-check="primary-on-primary"] .hint-preview')
+      ).color === hexToRgbString("#112233"),
+      "accessibility preview should match chosen text color"
+    );
+    results.push("accessibility previews");
+
+    assertTest(
+      exportOutput.value.includes("color.text.primary = #112233"),
+      "plain export should react to value changes"
+    );
+    exportModeSelect.value = "grouped";
+    dispatchChange(exportModeSelect);
+    assertTest(
+      exportOutput.value.includes("Typography") &&
+        exportOutput.value.includes("Color"),
+      "grouped export should show grouped sections"
+    );
+    results.push("export modes");
+
+    resetForm();
+    assertTest(
+      getHexInput("color.action.primary").value === defaults.action &&
+        getFontInput("font.family.body").value === defaults.body &&
+        exportModeSelect.value === "plain",
+      "reset should restore form defaults"
+    );
+    assertTest(
+      exportOutput.value.includes(`color.action.primary = ${defaults.action}`),
+      "reset should restore export output"
+    );
+    results.push("reset");
+  } finally {
+    resetForm();
+  }
+
+  return results;
+}
+
 function init() {
-  initializeState();
-  fetchGoogleFontsCatalog();
+  loadGoogleFontsCatalog();
   populateFontDatalist();
-  renderFontFields(typographyTokens, fontContainer);
-  renderColorFields(colorTokens, colorContainer);
-  renderColorFields(optionalTokens, optionalContainer);
+  initializeFontStatuses();
   bindControls();
   typographyTokens.forEach((token) => validateFontToken(token.name));
   updateUI();
+  window.runInteractionTests = runInteractionTests;
 }
 
 init();
