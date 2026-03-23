@@ -743,6 +743,16 @@ function updateContrastHints() {
 
   checks.forEach((check) => {
     const card = contrastHints.querySelector(`[data-check="${check.key}"]`);
+    const isOptionalCheck = check.key === "inverse-on-action";
+
+    if (isOptionalCheck) {
+      card.hidden = !state.enabledOptional;
+    }
+
+    if (isOptionalCheck && !state.enabledOptional) {
+      return;
+    }
+
     const ratio = getContrastRatio(check.foreground, check.background);
     const passes = ratio >= check.recommended;
     const badge = card.querySelector(".hint-badge");
