@@ -83,7 +83,92 @@
                   Figma.
                 </p>
               </div>
-              <div id="typography-fields" class="field-grid"></div>
+              <div id="typography-fields" class="field-grid">
+                <article class="token-card" data-token-card="font.family.brand">
+                  <div class="token-meta">
+                    <span class="token-name">font.family.brand</span>
+                    <h4 class="token-label">Site Name / Brand Font</h4>
+                    <p class="token-help">
+                      The font used for the site name, logo text, or branded
+                      title.
+                    </p>
+                  </div>
+                  <label class="field-label" for="font-family-brand">
+                    <span>Value</span>
+                    <input
+                      id="font-family-brand"
+                      class="token-input font-input"
+                      type="text"
+                      data-token="font.family.brand"
+                      value="Playfair Display"
+                      placeholder="Playfair Display"
+                      list="google-font-options"
+                      autocomplete="off"
+                    />
+                  </label>
+                  <p
+                    class="validation-message font-validation-message"
+                    data-token-message="font.family.brand"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="font.family.heading">
+                  <div class="token-meta">
+                    <span class="token-name">font.family.heading</span>
+                    <h4 class="token-label">Heading Font</h4>
+                    <p class="token-help">
+                      The main font used for page headings and section headings.
+                    </p>
+                  </div>
+                  <label class="field-label" for="font-family-heading">
+                    <span>Value</span>
+                    <input
+                      id="font-family-heading"
+                      class="token-input font-input"
+                      type="text"
+                      data-token="font.family.heading"
+                      value="Inter"
+                      placeholder="Inter"
+                      list="google-font-options"
+                      autocomplete="off"
+                    />
+                  </label>
+                  <p
+                    class="validation-message font-validation-message"
+                    data-token-message="font.family.heading"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="font.family.body">
+                  <div class="token-meta">
+                    <span class="token-name">font.family.body</span>
+                    <h4 class="token-label">Body Font</h4>
+                    <p class="token-help">
+                      The font used for paragraph text and most reading text.
+                    </p>
+                  </div>
+                  <label class="field-label" for="font-family-body">
+                    <span>Value</span>
+                    <input
+                      id="font-family-body"
+                      class="token-input font-input"
+                      type="text"
+                      data-token="font.family.body"
+                      value="Source Sans 3"
+                      placeholder="Source Sans 3"
+                      list="google-font-options"
+                      autocomplete="off"
+                    />
+                  </label>
+                  <p
+                    class="validation-message font-validation-message"
+                    data-token-message="font.family.body"
+                    aria-live="polite"
+                  ></p>
+                </article>
+              </div>
             </section>
 
             <section class="form-section">
@@ -96,7 +181,280 @@
                   Use role-based names instead of naming tokens by exact color.
                 </p>
               </div>
-              <div id="color-fields" class="field-grid"></div>
+              <div id="color-fields" class="field-grid">
+                <article class="token-card" data-token-card="color.text.primary">
+                  <div class="token-meta">
+                    <span class="token-name">color.text.primary</span>
+                    <h4 class="token-label">Primary Text</h4>
+                    <p class="token-help">
+                      The main text color used for most body copy and headings.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-text-primary-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-text-primary-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.text.primary"
+                        value="#1F1F1F"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-text-primary-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-text-primary-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.text.primary"
+                        value="#1F1F1F"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.text.primary"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color.background.primary">
+                  <div class="token-meta">
+                    <span class="token-name">color.background.primary</span>
+                    <h4 class="token-label">Primary Background</h4>
+                    <p class="token-help">The main page background color.</p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-background-primary-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-background-primary-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.background.primary"
+                        value="#FAFAF7"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-background-primary-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-background-primary-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.background.primary"
+                        value="#FAFAF7"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.background.primary"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color.text.secondary">
+                  <div class="token-meta">
+                    <span class="token-name">color.text.secondary</span>
+                    <h4 class="token-label">Secondary Text</h4>
+                    <p class="token-help">
+                      A less prominent text color for supporting information.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-text-secondary-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-text-secondary-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.text.secondary"
+                        value="#5A5A5A"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-text-secondary-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-text-secondary-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.text.secondary"
+                        value="#5A5A5A"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.text.secondary"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color.background.secondary">
+                  <div class="token-meta">
+                    <span class="token-name">color.background.secondary</span>
+                    <h4 class="token-label">Secondary Background</h4>
+                    <p class="token-help">
+                      A background color for cards, sections, or panels.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-background-secondary-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-background-secondary-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.background.secondary"
+                        value="#F1EFEA"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-background-secondary-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-background-secondary-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.background.secondary"
+                        value="#F1EFEA"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.background.secondary"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color.action.primary">
+                  <div class="token-meta">
+                    <span class="token-name">color.action.primary</span>
+                    <h4 class="token-label">Primary Action</h4>
+                    <p class="token-help">
+                      The main interactive color for buttons and important
+                      links.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-action-primary-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-action-primary-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.action.primary"
+                        value="#2F6FED"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-action-primary-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-action-primary-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.action.primary"
+                        value="#2F6FED"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.action.primary"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color.action.hover">
+                  <div class="token-meta">
+                    <span class="token-name">color.action.hover</span>
+                    <h4 class="token-label">Action Hover</h4>
+                    <p class="token-help">
+                      The hover state for buttons or interactive links.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-action-hover-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-action-hover-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.action.hover"
+                        value="#1E56C5"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-action-hover-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-action-hover-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.action.hover"
+                        value="#1E56C5"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.action.hover"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color.accent">
+                  <div class="token-meta">
+                    <span class="token-name">color.accent</span>
+                    <h4 class="token-label">Accent / Highlight</h4>
+                    <p class="token-help">
+                      A color used sparingly for emphasis, highlights, or small
+                      visual accents.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-accent-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-accent-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.accent"
+                        value="#D97706"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-accent-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-accent-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.accent"
+                        value="#D97706"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.accent"
+                    aria-live="polite"
+                  ></p>
+                </article>
+              </div>
             </section>
 
             <section class="form-section">
@@ -114,7 +472,125 @@
                 id="optional-fields"
                 class="field-grid optional-fields"
                 hidden
-              ></div>
+              >
+                <article class="token-card" data-token-card="color.border.subtle">
+                  <div class="token-meta">
+                    <span class="token-name">color.border.subtle</span>
+                    <h4 class="token-label">Subtle Border</h4>
+                    <p class="token-help">
+                      A light border or divider color.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-border-subtle-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-border-subtle-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.border.subtle"
+                        value="#D8D1C7"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-border-subtle-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-border-subtle-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.border.subtle"
+                        value="#D8D1C7"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.border.subtle"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color.text.inverse">
+                  <div class="token-meta">
+                    <span class="token-name">color.text.inverse</span>
+                    <h4 class="token-label">Inverse Text</h4>
+                    <p class="token-help">
+                      Text used on dark or strong colored backgrounds.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-text-inverse-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-text-inverse-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.text.inverse"
+                        value="#F9F7F2"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-text-inverse-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-text-inverse-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.text.inverse"
+                        value="#F9F7F2"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.text.inverse"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color.background.inverse">
+                  <div class="token-meta">
+                    <span class="token-name">color.background.inverse</span>
+                    <h4 class="token-label">Inverse Background</h4>
+                    <p class="token-help">
+                      A dark or contrasting background used for emphasis
+                      sections.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-background-inverse-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-background-inverse-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color.background.inverse"
+                        value="#20242D"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-background-inverse-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-background-inverse-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color.background.inverse"
+                        value="#20242D"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color.background.inverse"
+                    aria-live="polite"
+                  ></p>
+                </article>
+              </div>
             </section>
           </form>
         </section>
@@ -135,7 +611,7 @@
 
             <div class="preview-block">
               <div class="subheading-row">
-                <h3>Token summary</h3>
+                <h3>Token Summary</h3>
                 <span id="token-count" class="count-pill">0 tokens</span>
               </div>
               <div id="summary-list" class="summary-list"></div>
@@ -143,9 +619,58 @@
 
             <div class="preview-block">
               <div class="subheading-row">
-                <h3>Accessibility hints</h3>
+                <h3>Accessibility Checks</h3>
               </div>
-              <div id="contrast-hints" class="hint-list"></div>
+              <div id="contrast-hints" class="hint-list">
+                <article class="hint-card" data-check="primary-on-primary">
+                  <div class="hint-header">
+                    <p class="hint-title">Primary text on primary background</p>
+                    <div class="hint-badge">
+                      <span class="hint-badge-icon"></span>
+                      <span class="hint-badge-label"></span>
+                    </div>
+                  </div>
+                  <p class="hint-description"></p>
+                  <div class="hint-preview">
+                    <span class="hint-preview-label">Preview</span>
+                    <p class="hint-preview-text">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                  </div>
+                </article>
+                <article class="hint-card" data-check="secondary-on-secondary">
+                  <div class="hint-header">
+                    <p class="hint-title">Secondary text on secondary background</p>
+                    <div class="hint-badge">
+                      <span class="hint-badge-icon"></span>
+                      <span class="hint-badge-label"></span>
+                    </div>
+                  </div>
+                  <p class="hint-description"></p>
+                  <div class="hint-preview">
+                    <span class="hint-preview-label">Preview</span>
+                    <p class="hint-preview-text">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                  </div>
+                </article>
+                <article class="hint-card" data-check="inverse-on-action">
+                  <div class="hint-header">
+                    <p class="hint-title">Inverse text on action color</p>
+                    <div class="hint-badge">
+                      <span class="hint-badge-icon"></span>
+                      <span class="hint-badge-label"></span>
+                    </div>
+                  </div>
+                  <p class="hint-description"></p>
+                  <div class="hint-preview">
+                    <span class="hint-preview-label">Preview</span>
+                    <p class="hint-preview-text">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                  </div>
+                </article>
+              </div>
             </div>
           </section>
 
@@ -165,7 +690,9 @@
             </div>
           </section>
 
-          <section class="summary-card">
+        </aside>
+
+        <section class="summary-card">
               <div class="subheading-row export-toolbar">
               <div>
                 <p class="section-kicker">Step 3</p>
@@ -261,50 +788,8 @@
               </div>
             </div>
           </section>
-        </aside>
       </main>
     </div>
-
-    <template id="font-field-template">
-      <article class="token-card">
-        <div class="token-meta">
-          <span class="token-name"></span>
-          <h4 class="token-label"></h4>
-          <p class="token-help"></p>
-        </div>
-        <label class="field-label">
-          <span>Value</span>
-          <input class="token-input font-input" type="text" autocomplete="off" />
-        </label>
-        <p class="validation-message font-validation-message" aria-live="polite"></p>
-      </article>
-    </template>
-
-    <template id="color-field-template">
-      <article class="token-card">
-        <div class="token-meta">
-          <span class="token-name"></span>
-          <h4 class="token-label"></h4>
-          <p class="token-help"></p>
-        </div>
-        <div class="color-input-row">
-          <label class="field-label color-picker-label">
-            <span>Pick color</span>
-            <input class="token-input color-picker" type="color" />
-          </label>
-          <label class="field-label hex-field-label">
-            <span>Hex value</span>
-            <input
-              class="token-input hex-input"
-              type="text"
-              inputmode="text"
-              spellcheck="false"
-            />
-          </label>
-        </div>
-        <p class="validation-message" aria-live="polite"></p>
-      </article>
-    </template>
 
     <datalist id="google-font-options"></datalist>
 
