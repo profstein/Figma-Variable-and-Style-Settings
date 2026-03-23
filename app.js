@@ -197,7 +197,7 @@ function normalizeFontKey(value) {
 
 function buildGoogleFontStylesheetUrl(fontName) {
   const encodedFamily = encodeURIComponent(fontName).replace(/%20/g, "+");
-  return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@400;500;600;700&display=swap`;
+  return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@400;500;600;700;900&display=swap`;
 }
 
 function formatPreviewFontFamily(value, fallbackGeneric) {
@@ -566,6 +566,7 @@ function updateSummary() {
     const value = state.values[token.name] || "";
     const item = document.createElement("article");
     item.className = "summary-item";
+    item.id = `summary-${token.name.replace(/\./g, "-")}`;
 
     const main = document.createElement("div");
     main.className = "summary-item-main";
@@ -719,14 +720,14 @@ function updateContrastHints() {
   const checks = [
     {
       key: "primary-on-primary",
-      title: "Primary text on primary background",
+      title: "Primary text | background",
       foreground: getValidColor("color.text.primary", "#1F1F1F"),
       background: getValidColor("color.background.primary", "#FAFAF7"),
       recommended: 4.5,
     },
     {
       key: "secondary-on-secondary",
-      title: "Secondary text on secondary background",
+      title: "Secondary text | background",
       foreground: getValidColor("color.text.secondary", "#5A5A5A"),
       background: getValidColor("color.background.secondary", "#F1EFEA"),
       recommended: 4.5,
@@ -757,11 +758,11 @@ function updateContrastHints() {
     badge.classList.add(passes ? "good" : "warning");
 
     badgeIcon.textContent = passes ? "✓" : "✕";
-    badgeLabel.textContent = passes ? "Pass" : "Needs work";
-    title.textContent = `${check.title}: ${ratio.toFixed(2)}:1`;
+    badgeLabel.textContent = passes ? "Pass" : "Fail";
+    title.innerHTML = `${check.title}: <b>${ratio.toFixed(2)}:1</b>`;
     description.textContent = passes
-      ? "This pairing looks reasonably strong for normal-sized text."
-      : "This pairing may be hard to read. Try increasing contrast between text and background.";
+      ? "Pairing passes WCAG 2.1"
+      : "Pairing fails WCAG 2.1";
   });
 }
 

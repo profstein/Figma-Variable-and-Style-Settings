@@ -17,7 +17,7 @@
   --radius-md: 14px;
   --radius-sm: 10px;
   --font-display: "Fraunces", Georgia, serif;
-  --font-body: "Manrope", "Segoe UI", sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", sans-serif;
   --token-font-body: "Source Sans 3", "Segoe UI", sans-serif;
   --token-color-text-primary: #1f1f1f;
   --token-color-text-secondary: #5a5a5a;
@@ -321,8 +321,6 @@ h3 {
 .preview-panel {
   display: grid;
   gap: 20px;
-  position: sticky;
-  top: 16px;
 }
 
 .summary-card {
@@ -376,10 +374,7 @@ h3 {
 }
 
 .summary-item {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 14px;
-  align-items: center;
+  display: block;
 }
 
 .summary-item-main {
@@ -403,7 +398,12 @@ h3 {
   align-items: center;
   gap: 10px;
   font-weight: 600;
-  text-align: right;
+  text-align: left;
+  margin-top: 12px;
+}
+
+#summary-color-text-primary {
+  grid-column-start: 1;
 }
 
 .color-chip {
@@ -522,7 +522,7 @@ h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .hint-list {
+  .hint-list, .summary-list, #summary-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -651,10 +651,6 @@ h3 {
   .app-layout,
   .hero {
     grid-template-columns: 1fr;
-  }
-
-  .preview-panel {
-    position: static;
   }
 }
 
