@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Website Token Importer</title>
+    <style>
+      :root {
+        --bg: #f7f4ef;
+        --panel: #ffffff;
+        --text: #221f1b;
+        --muted: #655b50;
+        --line: #e2dacf;
+        --accent: #1f6f5d;
+        --danger: #b51a00;
+        --warning: #946e00;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 16px;
+        font: 13px/1.45 "Inter", "Segoe UI", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      .shell {
+        display: grid;
+        gap: 14px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--panel);
+        padding: 12px;
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      h2 {
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .subtitle {
+        margin-top: 4px;
+        color: var(--muted);
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      label {
+        font-weight: 600;
+      }
+
+      input,
+      textarea,
+      select,
+      button {
+        font: inherit;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--text);
+        padding: 10px;
+      }
+
+      input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+      }
+
+      textarea {
+        min-height: 230px;
+        resize: vertical;
+        white-space: pre;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .toolbar.bottom {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .style-options-grid {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .checkbox-row label {
+        font-weight: 500;
+      }
+
+      .option-note {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 9px 10px;
+        cursor: pointer;
+        background: #fff;
+      }
+
+      button.primary {
+        background: var(--accent);
+        border-color: transparent;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      button.danger {
+        color: var(--danger);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .status {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .status strong {
+        color: var(--text);
+      }
+
+      .warning-list,
+      .error-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+        max-height: 160px;
+        overflow: auto;
+      }
+
+      .warning-list li {
+        margin-bottom: 4px;
+        color: var(--warning);
+      }
+
+      .error-list li {
+        margin-bottom: 4px;
+        color: var(--danger);
+      }
+
+      .summary-footer {
+        color: var(--muted);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <h1>Import Tokens to Variables + Styles</h1>
+        <p class="subtitle">
+          Paste `token/name = value` lines and create/update local Figma variables
+          and selected style sets.
+        </p>
+      </section>
+
+      <section class="panel field">
+        <label for="collectionName">Collection Name</label>
+        <input id="collectionName" value="Website Tokens" />
+      </section>
+
+      <section class="panel field">
+        <label for="tokenInput">Token Lines</label>
+        <textarea
+          id="tokenInput"
+          placeholder="font/family/brand = Playfair Display&#10;color/text/primary = #1F1F1F"
+        ></textarea>
+        <div class="toolbar">
+          <button id="loadExample" type="button">Load Example</button>
+          <button id="copyErrors" type="button" class="danger" disabled>
+            Copy Errors
+          </button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Create Styles</h2>
+        <div class="style-options-grid">
+          <div class="checkbox-row">
+            <input id="createColorStyles" type="checkbox" checked />
+            <label for="createColorStyles">Create color styles</label>
+          </div>
+          <div class="checkbox-row">
+            <input id="createTextStyles" type="checkbox" checked />
+            <label for="createTextStyles">Create text styles</label>
+          </div>
+          <div class="field">
+            <label for="baseFontSize">Base font size</label>
+            <input id="baseFontSize" type="number" value="16" min="8" max="72" />
+          </div>
+          <div class="field">
+            <label for="typeScalePreset">Type scale</label>
+            <select id="typeScalePreset">
+              <option value="standard">Standard (1.25 / 1.125)</option>
+              <option value="balanced">Balanced (1.5 / 1.25)</option>
+              <option value="expressive">Expressive (1.618 / 1.5)</option>
+            </select>
+          </div>
+        </div>
+        <div class="checkbox-row option-note">
+          <input id="includeMobileStyles" type="checkbox" checked />
+          <label for="includeMobileStyles">
+            Create desktop + mobile sets (unchecked: create single `text/` set)
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div id="status" class="status">Waiting for input...</div>
+        <ul id="warningList" class="warning-list"></ul>
+        <ul id="errorList" class="error-list"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar bottom">
+          <button id="cancel" type="button">Cancel</button>
+          <button id="import" type="button" class="primary">Import</button>
+          <div id="summaryFooter" class="summary-footer"></div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const state = {
+        errors: [],
+        warnings: [],
+        exampleTokens: "",
+      };
+
+      const collectionInput = document.getElementById("collectionName");
+      const tokenInput = document.getElementById("tokenInput");
+      const loadExampleButton = document.getElementById("loadExample");
+      const copyErrorsButton = document.getElementById("copyErrors");
+      const importButton = document.getElementById("import");
+      const cancelButton = document.getElementById("cancel");
+      const createColorStylesInput = document.getElementById("createColorStyles");
+      const createTextStylesInput = document.getElementById("createTextStyles");
+      const includeMobileStylesInput = document.getElementById("includeMobileStyles");
+      const baseFontSizeInput = document.getElementById("baseFontSize");
+      const typeScalePresetInput = document.getElementById("typeScalePreset");
+
+      const statusNode = document.getElementById("status");
+      const warningListNode = document.getElementById("warningList");
+      const errorListNode = document.getElementById("errorList");
+      const summaryFooterNode = document.getElementById("summaryFooter");
+
+      function postMessage(message) {
+        parent.postMessage({ pluginMessage: message }, "*");
+      }
+
+      function setStatus(html) {
+        statusNode.innerHTML = html;
+      }
+
+      function renderWarnings(warnings) {
+        warningListNode.innerHTML = "";
+        state.warnings = warnings || [];
+        state.warnings.forEach((warning) => {
+          const li = document.createElement("li");
+          li.textContent =
+            warning.lineNumber == null
+              ? warning.message
+              : `Line ${warning.lineNumber}: ${warning.message}`;
+          warningListNode.appendChild(li);
+        });
+      }
+
+      function renderErrors(errors) {
+        errorListNode.innerHTML = "";
+        state.errors = errors || [];
+        copyErrorsButton.disabled = state.errors.length === 0;
+
+        state.errors.forEach((error) => {
+          const li = document.createElement("li");
+          li.textContent =
+            error.lineNumber == null
+              ? error.message
+              : `Line ${error.lineNumber}: ${error.message}`;
+          errorListNode.appendChild(li);
+        });
+      }
+
+      function formatPlural(count, singular, plural) {
+        return `${count} ${count === 1 ? singular : plural}`;
+      }
+
+      function setTextStyleControlsEnabled() {
+        const enabled = createTextStylesInput.checked;
+        includeMobileStylesInput.disabled = !enabled;
+        baseFontSizeInput.disabled = !enabled;
+        typeScalePresetInput.disabled = !enabled;
+      }
+
+      createTextStylesInput.addEventListener("change", setTextStyleControlsEnabled);
+
+      loadExampleButton.addEventListener("click", () => {
+        tokenInput.value = state.exampleTokens;
+      });
+
+      copyErrorsButton.addEventListener("click", async () => {
+        if (state.errors.length === 0) {
+          return;
+        }
+
+        const errorText = state.errors
+          .map((error) =>
+            error.lineNumber == null
+              ? error.message
+              : `Line ${error.lineNumber}: ${error.message}`
+          )
+          .join("\n");
+
+        try {
+          await navigator.clipboard.writeText(errorText);
+          setStatus("<strong>Copied errors to clipboard.</strong>");
+        } catch (error) {
+          setStatus("<strong>Could not copy errors.</strong>");
+        }
+      });
+
+      cancelButton.addEventListener("click", () => {
+        postMessage({ type: "cancel" });
+      });
+
+      importButton.addEventListener("click", () => {
+        setStatus("<strong>Importing...</strong>");
+        postMessage({
+          type: "import-tokens",
+          text: tokenInput.value,
+          collectionName: collectionInput.value,
+          options: {
+            createColorStyles: createColorStylesInput.checked,
+            createTextStyles: createTextStylesInput.checked,
+            includeMobileStyles: includeMobileStylesInput.checked,
+            baseFontSize: baseFontSizeInput.value,
+            typeScalePreset: typeScalePresetInput.value,
+          },
+        });
+      });
+
+      onmessage = (event) => {
+        const message = event.data.pluginMessage;
+        if (!message) {
+          return;
+        }
+
+        if (message.type === "ready") {
+          state.exampleTokens = message.exampleTokens || "";
+          collectionInput.value = message.defaultCollectionName || "Website Tokens";
+
+          const defaultOptions = message.defaultOptions || {};
+          createColorStylesInput.checked =
+            defaultOptions.createColorStyles !== false;
+          createTextStylesInput.checked = defaultOptions.createTextStyles !== false;
+          includeMobileStylesInput.checked =
+            defaultOptions.includeMobileStyles !== false;
+          baseFontSizeInput.value = defaultOptions.baseFontSize || 16;
+          typeScalePresetInput.value = defaultOptions.typeScalePreset || "standard";
+
+          if (!tokenInput.value.trim()) {
+            tokenInput.value = state.exampleTokens;
+          }
+
+          setTextStyleControlsEnabled();
+          setStatus("Ready. Paste tokens and click Import.");
+          return;
+        }
+
+        if (message.type === "import-failed") {
+          setStatus(`<strong>Import failed:</strong> ${message.message}`);
+          renderWarnings([]);
+          renderErrors([]);
+          summaryFooterNode.textContent = "";
+          return;
+        }
+
+        if (message.type === "import-result") {
+          const variableChanged =
+            (message.variables.created || 0) + (message.variables.updated || 0);
+          const colorStyleChanged =
+            (message.colorStyles.created || 0) + (message.colorStyles.updated || 0);
+          const textStyleChanged =
+            (message.textStyles.created || 0) + (message.textStyles.updated || 0);
+          const totalChanged = variableChanged + colorStyleChanged + textStyleChanged;
+
+          const counts = [
+            `variables: ${message.variables.created} created, ${message.variables.updated} updated`,
+            `color styles: ${message.colorStyles.created} created, ${message.colorStyles.updated} updated, ${message.colorStyles.skipped} skipped`,
+            `text styles: ${message.textStyles.created} created, ${message.textStyles.updated} updated, ${message.textStyles.skipped} skipped`,
+            formatPlural(message.skipped, "skipped line", "skipped lines"),
+            formatPlural(message.warnings.length, "warning", "warnings"),
+            formatPlural(message.errors.length, "error", "errors"),
+          ].join(" | ");
+
+          setStatus(`<strong>Import complete.</strong> ${counts}`);
+
+          renderWarnings(message.warnings || []);
+          renderErrors(message.errors || []);
+
+          summaryFooterNode.textContent = `Collection: ${message.collectionName} | Total imported/updated: ${totalChanged}`;
+        }
+      };
+    </script>
+  </body>
+</html>
