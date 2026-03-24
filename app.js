@@ -1,16 +1,16 @@
 const typographyTokens = [
   {
-    name: "font.family.brand",
+    name: "font/family/brand",
     label: "Site Name / Brand Font",
     defaultValue: "Playfair Display",
   },
   {
-    name: "font.family.heading",
+    name: "font/family/heading",
     label: "Heading Font",
     defaultValue: "Inter",
   },
   {
-    name: "font.family.body",
+    name: "font/family/body",
     label: "Body Font",
     defaultValue: "Source Sans 3",
   },
@@ -18,37 +18,37 @@ const typographyTokens = [
 
 const colorTokens = [
   {
-    name: "color.text.primary",
+    name: "color/text/primary",
     label: "Primary Text",
     defaultValue: "#1F1F1F",
   },
   {
-    name: "color.background.primary",
+    name: "color/background/primary",
     label: "Primary Background",
     defaultValue: "#FAFAF7",
   },
   {
-    name: "color.text.secondary",
+    name: "color/text/secondary",
     label: "Secondary Text",
     defaultValue: "#5A5A5A",
   },
   {
-    name: "color.background.secondary",
+    name: "color/background/secondary",
     label: "Secondary Background",
     defaultValue: "#F1EFEA",
   },
   {
-    name: "color.action.primary",
+    name: "color/action/primary",
     label: "Primary Action",
     defaultValue: "#2F6FED",
   },
   {
-    name: "color.action.hover",
+    name: "color/action/hover",
     label: "Action Hover",
     defaultValue: "#1E56C5",
   },
   {
-    name: "color.accent",
+    name: "color/accent",
     label: "Accent / Highlight",
     defaultValue: "#D97706",
   },
@@ -56,17 +56,17 @@ const colorTokens = [
 
 const optionalTokens = [
   {
-    name: "color.border.subtle",
+    name: "color/border/subtle",
     label: "Subtle Border",
     defaultValue: "#D8D1C7",
   },
   {
-    name: "color.text.inverse",
+    name: "color/text/inverse",
     label: "Inverse Text",
     defaultValue: "#F9F7F2",
   },
   {
-    name: "color.background.inverse",
+    name: "color/background/inverse",
     label: "Inverse Background",
     defaultValue: "#20242D",
   },
@@ -530,31 +530,31 @@ function getValidColor(name, fallback) {
 function updateTokenCssVariables() {
   rootStyles.setProperty(
     "--token-font-body",
-    formatPreviewFontFamily(state.values["font.family.body"], '"Segoe UI", sans-serif')
+    formatPreviewFontFamily(state.values["font/family/body"], '"Segoe UI", sans-serif')
   );
   rootStyles.setProperty(
     "--token-color-text-primary",
-    getValidColor("color.text.primary", "#1F1F1F")
+    getValidColor("color/text/primary", "#1F1F1F")
   );
   rootStyles.setProperty(
     "--token-color-background-primary",
-    getValidColor("color.background.primary", "#FAFAF7")
+    getValidColor("color/background/primary", "#FAFAF7")
   );
   rootStyles.setProperty(
     "--token-color-text-secondary",
-    getValidColor("color.text.secondary", "#5A5A5A")
+    getValidColor("color/text/secondary", "#5A5A5A")
   );
   rootStyles.setProperty(
     "--token-color-background-secondary",
-    getValidColor("color.background.secondary", "#F1EFEA")
+    getValidColor("color/background/secondary", "#F1EFEA")
   );
   rootStyles.setProperty(
     "--token-color-action-primary",
-    getValidColor("color.action.primary", "#2F6FED")
+    getValidColor("color/action/primary", "#2F6FED")
   );
   rootStyles.setProperty(
     "--token-color-text-inverse",
-    getValidColor("color.text.inverse", "#F9F7F2")
+    getValidColor("color/text/inverse", "#F9F7F2")
   );
 }
 
@@ -566,7 +566,7 @@ function updateSummary() {
     const value = state.values[token.name] || "";
     const item = document.createElement("article");
     item.className = "summary-item";
-    item.id = `summary-${token.name.replace(/\./g, "-")}`;
+    item.id = `summary-${token.name.replace(/[/.]/g, "-")}`;
 
     const main = document.createElement("div");
     main.className = "summary-item-main";
@@ -584,7 +584,7 @@ function updateSummary() {
     const valueNode = document.createElement("div");
     valueNode.className = "summary-value";
 
-    if (token.name.startsWith("color.") && isValidHex(value)) {
+    if (token.name.startsWith("color/") && isValidHex(value)) {
       const chip = document.createElement("span");
       chip.className = "color-chip";
       chip.style.backgroundColor = normalizeHex(value);
@@ -594,7 +594,7 @@ function updateSummary() {
     const valueText = document.createElement("span");
     valueText.textContent = value || "Not set";
 
-    if (token.name.startsWith("font.") && value) {
+    if (token.name.startsWith("font/") && value) {
       valueText.style.fontFamily = formatPreviewFontFamily(value, "sans-serif");
     }
 
@@ -611,19 +611,19 @@ function updateTypographyPreview() {
     {
       label: "Brand sample",
       text: "Studio North",
-      token: "font.family.brand",
+      token: "font/family/brand",
       style: { fontSize: "1.45rem", fontWeight: "700" },
     },
     {
       label: "Heading sample",
       text: "Build a clear layout with reusable decisions",
-      token: "font.family.heading",
+      token: "font/family/heading",
       style: { fontSize: "1.65rem", fontWeight: "700", lineHeight: "1.15" },
     },
     {
       label: "Body sample",
       text: "Use your body font for paragraphs, UI labels, and other reading text across the website.",
-      token: "font.family.body",
+      token: "font/family/body",
       style: { fontSize: "1rem", fontWeight: "500", lineHeight: "1.65" },
     },
   ];
@@ -652,17 +652,17 @@ function updateTypographyPreview() {
 }
 
 function updateWebsitePreview() {
-  const bgPrimary = getValidColor("color.background.primary", "#FAFAF7");
-  const textPrimary = getValidColor("color.text.primary", "#1F1F1F");
-  const actionPrimary = getValidColor("color.action.primary", "#2F6FED");
-  const brandFont = state.values["font.family.brand"] || "Fraunces";
-  const headingFont = state.values["font.family.heading"] || "Manrope";
-  const bodyFont = state.values["font.family.body"] || "Manrope";
+  const bgPrimary = getValidColor("color/background/primary", "#FAFAF7");
+  const textPrimary = getValidColor("color/text/primary", "#1F1F1F");
+  const actionPrimary = getValidColor("color/action/primary", "#2F6FED");
+  const brandFont = state.values["font/family/brand"] || "Fraunces";
+  const headingFont = state.values["font/family/heading"] || "Manrope";
+  const bodyFont = state.values["font/family/body"] || "Manrope";
 
   websitePreview.style.background = bgPrimary;
   websitePreview.style.color = textPrimary;
   websitePreview.style.borderColor = getValidColor(
-    "color.border.subtle",
+    "color/border/subtle",
     "rgba(98, 82, 61, 0.16)"
   );
 
@@ -677,9 +677,9 @@ function updateWebsitePreview() {
   title.style.color = textPrimary;
   body.style.color = textPrimary;
   previewAction.style.backgroundColor = actionPrimary;
-  previewAction.style.color = getValidColor("color.text.inverse", "#FFFFFF");
+  previewAction.style.color = getValidColor("color/text/inverse", "#FFFFFF");
   previewAction.dataset.baseColor = actionPrimary;
-  previewAction.dataset.hoverColor = getValidColor("color.action.hover", "#1E56C5");
+  previewAction.dataset.hoverColor = getValidColor("color/action/hover", "#1E56C5");
 }
 
 function toRgb(hex) {
@@ -721,22 +721,22 @@ function updateContrastHints() {
     {
       key: "primary-on-primary",
       title: "Primary text | background",
-      foreground: getValidColor("color.text.primary", "#1F1F1F"),
-      background: getValidColor("color.background.primary", "#FAFAF7"),
+      foreground: getValidColor("color/text/primary", "#1F1F1F"),
+      background: getValidColor("color/background/primary", "#FAFAF7"),
       recommended: 4.5,
     },
     {
       key: "secondary-on-secondary",
       title: "Secondary text | background",
-      foreground: getValidColor("color.text.secondary", "#5A5A5A"),
-      background: getValidColor("color.background.secondary", "#F1EFEA"),
+      foreground: getValidColor("color/text/secondary", "#5A5A5A"),
+      background: getValidColor("color/background/secondary", "#F1EFEA"),
       recommended: 4.5,
     },
     {
       key: "inverse-on-action",
       title: "Inverse text on action color",
-      foreground: getValidColor("color.text.inverse", "#FFFFFF"),
-      background: getValidColor("color.action.primary", "#2F6FED"),
+      foreground: getValidColor("color/text/inverse", "#FFFFFF"),
+      background: getValidColor("color/action/primary", "#2F6FED"),
       recommended: 4.5,
     },
   ];
@@ -778,7 +778,7 @@ function updateContrastHints() {
 
 function buildPlainExport(tokens) {
   return tokens
-    .map((token) => `${token.name} = ${state.values[token.name] || ""}`)
+    .map((token) => `${token.name}=${state.values[token.name] || ""}`)
     .join("\n");
 }
 
@@ -786,11 +786,11 @@ function buildGroupedExport(tokens) {
   const groups = [
     {
       title: "Typography",
-      tokens: tokens.filter((token) => token.name.startsWith("font.")),
+      tokens: tokens.filter((token) => token.name.startsWith("font/")),
     },
     {
       title: "Color",
-      tokens: tokens.filter((token) => token.name.startsWith("color.")),
+      tokens: tokens.filter((token) => token.name.startsWith("color/")),
     },
   ].filter((group) => group.tokens.length > 0);
 
@@ -915,6 +915,7 @@ function handleFormChange(event) {
 function bindControls() {
   tokenForm.addEventListener("input", handleFormInput);
   tokenForm.addEventListener("change", handleFormChange);
+  exportModeSelect.addEventListener("change", updateUI);
   copyButton.addEventListener("click", copyExport);
   resetButton.addEventListener("click", resetForm);
   previewAction.addEventListener("click", (event) => event.preventDefault());
@@ -947,12 +948,12 @@ function hexToRgbString(hex) {
 
 function runInteractionTests() {
   const defaults = {
-    brand: getFontInput("font.family.brand").value,
-    heading: getFontInput("font.family.heading").value,
-    body: getFontInput("font.family.body").value,
-    action: getHexInput("color.action.primary").value,
-    textPrimary: getHexInput("color.text.primary").value,
-    bgPrimary: getHexInput("color.background.primary").value,
+    brand: getFontInput("font/family/brand").value,
+    heading: getFontInput("font/family/heading").value,
+    body: getFontInput("font/family/body").value,
+    action: getHexInput("color/action/primary").value,
+    textPrimary: getHexInput("color/text/primary").value,
+    bgPrimary: getHexInput("color/background/primary").value,
   };
   const results = [];
 
@@ -963,15 +964,15 @@ function runInteractionTests() {
     );
     results.push("catalog status");
 
-    getFontInput("font.family.brand").value = "Poppins";
-    dispatchInput(getFontInput("font.family.brand"));
-    dispatchChange(getFontInput("font.family.brand"));
-    getFontInput("font.family.heading").value = "Poppins";
-    dispatchInput(getFontInput("font.family.heading"));
-    dispatchChange(getFontInput("font.family.heading"));
-    getFontInput("font.family.body").value = "Poppins";
-    dispatchInput(getFontInput("font.family.body"));
-    dispatchChange(getFontInput("font.family.body"));
+    getFontInput("font/family/brand").value = "Poppins";
+    dispatchInput(getFontInput("font/family/brand"));
+    dispatchChange(getFontInput("font/family/brand"));
+    getFontInput("font/family/heading").value = "Poppins";
+    dispatchInput(getFontInput("font/family/heading"));
+    dispatchChange(getFontInput("font/family/heading"));
+    getFontInput("font/family/body").value = "Poppins";
+    dispatchInput(getFontInput("font/family/body"));
+    dispatchChange(getFontInput("font/family/body"));
     assertTest(
       websitePreview.querySelector(".preview-brand").style.fontFamily.includes("Poppins"),
       "sample website card should use chosen brand font"
@@ -986,10 +987,10 @@ function runInteractionTests() {
     );
     results.push("font previews");
 
-    getHexInput("color.action.primary").value = "#FF5500";
-    dispatchInput(getHexInput("color.action.primary"));
+    getHexInput("color/action/primary").value = "#FF5500";
+    dispatchInput(getHexInput("color/action/primary"));
     assertTest(
-      getColorPicker("color.action.primary").value.toUpperCase() === "#FF5500",
+      getColorPicker("color/action/primary").value.toUpperCase() === "#FF5500",
       "hex and color picker should stay in sync"
     );
     assertTest(
@@ -998,10 +999,10 @@ function runInteractionTests() {
     );
     results.push("color sync");
 
-    getHexInput("color.text.primary").value = "#112233";
-    dispatchInput(getHexInput("color.text.primary"));
-    getHexInput("color.background.primary").value = "#F4F1EA";
-    dispatchInput(getHexInput("color.background.primary"));
+    getHexInput("color/text/primary").value = "#112233";
+    dispatchInput(getHexInput("color/text/primary"));
+    getHexInput("color/background/primary").value = "#F4F1EA";
+    dispatchInput(getHexInput("color/background/primary"));
     assertTest(
       getComputedStyle(websitePreview).backgroundColor === hexToRgbString("#F4F1EA"),
       "sample website card should use primary background color"
@@ -1021,7 +1022,7 @@ function runInteractionTests() {
     results.push("accessibility previews");
 
     assertTest(
-      exportOutput.value.includes("color.text.primary = #112233"),
+      exportOutput.value.includes("color/text/primary=#112233"),
       "plain export should react to value changes"
     );
     exportModeSelect.value = "grouped";
@@ -1035,13 +1036,13 @@ function runInteractionTests() {
 
     resetForm();
     assertTest(
-      getHexInput("color.action.primary").value === defaults.action &&
-        getFontInput("font.family.body").value === defaults.body &&
+      getHexInput("color/action/primary").value === defaults.action &&
+        getFontInput("font/family/body").value === defaults.body &&
         exportModeSelect.value === "plain",
       "reset should restore form defaults"
     );
     assertTest(
-      exportOutput.value.includes(`color.action.primary = ${defaults.action}`),
+      exportOutput.value.includes(`color/action/primary=${defaults.action}`),
       "reset should restore export output"
     );
     results.push("reset");
