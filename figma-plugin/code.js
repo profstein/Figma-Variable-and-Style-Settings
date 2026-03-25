@@ -24,6 +24,8 @@ const DEFAULT_IMPORT_OPTIONS = {
   typeScalePreset: "standard",
 };
 
+let availableFontsPromise = null;
+
 figma.showUI(__html__, {
   width: 560,
   height: 860,
@@ -446,7 +448,7 @@ async function createTextStylesFromTokens({ tokenLookup, options, report }) {
   ];
 
   const textStyleMap = await buildTextStyleMap();
-  const availableFonts = await figma.listAvailableFontsAsync();
+  const availableFonts = await getAvailableFontsCached();
   const fontIndex = buildAvailableFontIndex(availableFonts);
   const loadedFontCache = new Set();
 
@@ -580,6 +582,13 @@ function buildAvailableFontIndex(availableFonts) {
   return map;
 }
 
+async function getAvailableFontsCached() {
+  if (!availableFontsPromise) {
+    availableFontsPromise = figma.listAvailableFontsAsync();
+  }
+  return await availableFontsPromise;
+}
+
 function resolveFontName({ requestedFamily, preferredStyles, fontIndex }) {
   const familyKey = requestedFamily.trim().toLowerCase();
   const familyFonts = fontIndex.get(familyKey);
@@ -663,14 +672,112 @@ async function createOrUpdateVariable({
       };
     }
 
-    existing.setValueForMode(modeId, value);
+    const updateResult = await setVariableValueSafely({
+      variable: existing,
+      modeId: modeId,
+      value: value,
+      tokenName: name,
+      tokenType: type,
+    });
+    if (updateResult.status === "error") {
+      return updateResult;
+    }
     return { status: "updated" };
   }
 
   const variable = figma.variables.createVariable(name, collection.id, type);
-  variable.setValueForMode(modeId, value);
+  const setResult = await setVariableValueSafely({
+    variable: variable,
+    modeId: modeId,
+    value: value,
+    tokenName: name,
+    tokenType: type,
+  });
+  if (setResult.status === "error") {
+    return setResult;
+  }
   variableMap.set(name, variable);
   return { status: "created" };
+}
+
+async function setVariableValueSafely({
+  variable,
+  modeId,
+  value,
+  tokenName,
+  tokenType,
+}) {
+  try {
+    variable.setValueForMode(modeId, value);
+    return { status: "ok" };
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to set variable value.";
+    const canTryFontLoad =
+      tokenType === "STRING" &&
+      tokenName.startsWith("font/") &&
+      typeof value === "string" &&
+      value.trim().length > 0;
+
+    if (!canTryFontLoad) {
+      return { status: "error", message: errorMessage };
+    }
+
+    const loaded = await loadFontsMatchingTokenValue(value);
+    if (!loaded) {
+      return { status: "error", message: errorMessage };
+    }
+
+    try {
+      variable.setValueForMode(modeId, value);
+      return { status: "ok" };
+    } catch (retryError) {
+      return {
+        status: "error",
+        message:
+          retryError instanceof Error
+            ? retryError.message
+            : "Failed to set variable value after loading matching fonts.",
+      };
+    }
+  }
+}
+
+async function loadFontsMatchingTokenValue(tokenValue) {
+  const requested = tokenValue.trim().toLowerCase();
+  const availableFonts = await getAvailableFontsCached();
+  const familyMatches = [];
+  const exactNameMatches = [];
+
+  for (const font of availableFonts) {
+    const family = font.fontName.family.trim();
+    const style = font.fontName.style.trim();
+    const familyKey = family.toLowerCase();
+    const fullKey = `${family} ${style}`.toLowerCase();
+
+    if (familyKey === requested) {
+      familyMatches.push(font.fontName);
+    }
+    if (fullKey === requested) {
+      exactNameMatches.push(font.fontName);
+    }
+  }
+
+  if (exactNameMatches.length > 0) {
+    for (const fontName of exactNameMatches) {
+      await figma.loadFontAsync(fontName);
+    }
+    return true;
+  }
+
+  if (familyMatches.length > 0) {
+    for (const fontName of familyMatches) {
+      await figma.loadFontAsync(fontName);
+    }
+    return true;
+  }
+
+  return false;
 }
 
 async function getLocalPaintStyles() {
