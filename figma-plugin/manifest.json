@@ -1,6 +1,6 @@
 {
-  "name": "Website Token Variable + Style Importer",
-  "id": "com.bmcc.website-token-variable-importer",
+  "name": "Website Style Token Importer",
+  "id": "com.bmcc.website-style-token-importer",
   "api": "1.0.0",
   "editorType": ["figma"],
   "main": "code.js",
