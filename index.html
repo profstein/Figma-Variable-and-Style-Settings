@@ -24,34 +24,34 @@
             and styles in Figma.
           </p>
           <div class="note-stack">
+            <h2>NOTES:</h2>
             <p>
-              Semantic naming is preferred because the role stays stable even
-              if the actual font or color changes.
+              Semantic names with slashes (eg font/family/brand) are used for understanding and to keep things organized in Figma.
             </p>
             <p>
-              Choose fonts from Google Fonts when possible, since those are
+              Choose fonts from <a href="https://fonts.google.com">Google Fonts</a> listed in the auto complete. Figma uses Google fonts  and this form ensures the spelling is accurate. when possible, since those are
               also commonly available in Figma. Write the font name with the
               exact spelling so your variable values match correctly later.
             </p>
             <p>
-              Choose accessible, readable text and background combinations so
-              your website is easier to use.
+              Color contrast (between text and background color) must be accessible, Use step 3 to make sure your combinations are valid.
             </p>
             <p>
-              In Figma, variables store values. Styles apply those values in
-              actual text and UI elements.
+              This workflow makes your project easier to update by storing the font names and color values in variables and then applying these variables to text and color styles. The form and associated plugin help you bring this advanced workflow to you projects quickly.
             </p>
           </div>
         </div>
 
         <aside class="hero-card">
           <h2>How to use this</h2>
+          <p>Before you start, you should have done research and planning on the typography and colors for your site.</p>
           <ol>
-            <li>Pick a small set of fonts and colors for your website.</li>
-            <li>Use Google Fonts and record each font name exactly as written.</li>
-            <li>Keep names role-based, like primary text or heading font.</li>
-            <li>Copy the export list when you are ready to build in Figma.</li>
+            <li>Step 1: Set fonts and colors. Choose your main font families for your site name/brand, headings and body (base font). Google Fonts are used because Figma uses them too. Pick your colors. Note the roles provided (primary, secondary, text, background)</li>
+            <li>Step 2: Review the summary to make sure you entered things correctly and that your text/background color combinations are accessible.</li>
+            <li>Step 3: Copy the export tokens.</li>
+            <li>Step 4: Run the <b>Website Style Token Importer</b> plugin and paste in the tokens you copied.</li>
           </ol>
+          <p>When you're done, you should have variables and styles defined in your Figma file.</p>
         </aside>
       </header>
 
@@ -379,9 +379,9 @@
                 <article class="token-card" data-token-card="color/action/hover">
                   <div class="token-meta">
                     <span class="token-name">color/action/hover</span>
-                    <h4 class="token-label">Action Hover</h4>
+                    <h4 class="token-label">Primary Action Hover</h4>
                     <p class="token-help">
-                      The hover state for buttons or interactive links.
+                      The hover state for primary buttons or interactive links.
                     </p>
                   </div>
                   <div class="color-input-row">
@@ -411,6 +411,84 @@
                   <p
                     class="validation-message"
                     data-token-message="color/action/hover"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color/action/secondary">
+                  <div class="token-meta">
+                    <span class="token-name">color/action/secondary</span>
+                    <h4 class="token-label">Secondary Action</h4>
+                    <p class="token-help">
+                      A lower-emphasis action color for secondary buttons or links.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-action-secondary-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-action-secondary-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color/action/secondary"
+                        value="#6B7280"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-action-secondary-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-action-secondary-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color/action/secondary"
+                        value="#6B7280"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color/action/secondary"
+                    aria-live="polite"
+                  ></p>
+                </article>
+
+                <article class="token-card" data-token-card="color/action/secondary-hover">
+                  <div class="token-meta">
+                    <span class="token-name">color/action/secondary-hover</span>
+                    <h4 class="token-label">Secondary Action Hover</h4>
+                    <p class="token-help">
+                      The hover state for secondary buttons or interactive links.
+                    </p>
+                  </div>
+                  <div class="color-input-row">
+                    <label class="field-label color-picker-label" for="color-action-secondary-hover-picker">
+                      <span>Pick color</span>
+                      <input
+                        id="color-action-secondary-hover-picker"
+                        class="token-input color-picker"
+                        type="color"
+                        data-token="color/action/secondary-hover"
+                        value="#4B5563"
+                      />
+                    </label>
+                    <label class="field-label hex-field-label" for="color-action-secondary-hover-hex">
+                      <span>Hex value</span>
+                      <input
+                        id="color-action-secondary-hover-hex"
+                        class="token-input hex-input"
+                        type="text"
+                        data-token="color/action/secondary-hover"
+                        value="#4B5563"
+                        inputmode="text"
+                        spellcheck="false"
+                      />
+                    </label>
+                  </div>
+                  <p
+                    class="validation-message"
+                    data-token-message="color/action/secondary-hover"
                     aria-live="polite"
                   ></p>
                 </article>
@@ -676,17 +754,29 @@
 
           <section class="summary-card preview-card-section">
             <div class="subheading-row">
-              <h2>Sample website card</h2>
+              <h2>Sample website cards</h2>
             </div>
-            <div id="website-preview" class="website-preview">
-              <p class="preview-brand">Studio North</p>
-              <h3 class="preview-title">Design with a clear visual system</h3>
-              <p class="preview-body">
-                This sample card updates with your chosen fonts and core color
-                tokens so you can check the overall feel before building in
-                Figma.
-              </p>
-              <a href="#" class="preview-action">Primary action</a>
+            <div class="website-preview-grid">
+              <article id="website-preview-primary" class="website-preview">
+                <p class="preview-card-kicker">Primary set preview</p>
+                <p class="preview-brand">Studio North</p>
+                <h3 class="preview-title">Design with a clear visual system</h3>
+                <p class="preview-body">
+                  This card uses primary text, primary background, and primary
+                  action tokens.
+                </p>
+                <a href="#" class="preview-action">Primary action</a>
+              </article>
+              <article id="website-preview-secondary" class="website-preview">
+                <p class="preview-card-kicker">Secondary set preview</p>
+                <p class="preview-brand">Studio North</p>
+                <h3 class="preview-title">Supportive UI treatment</h3>
+                <p class="preview-body">
+                  This card uses secondary text, secondary background, and
+                  secondary action tokens.
+                </p>
+                <a href="#" class="preview-action">Secondary action</a>
+              </article>
             </div>
           </section>
 
@@ -723,37 +813,45 @@
             <div class="subheading-row">
               <div>
                 <p class="section-kicker">Step 4</p>
-                <h2>Build variables in Figma</h2>
+                <h2>Run the plugin in Figma</h2>
               </div>
             </div>
             <div class="instruction-list">
               <div class="instruction-item">
-                <p class="mapping-token">1. Create collections</p>
+                <p class="mapping-token">1. Open the plugin</p>
                 <p>
-                  In Figma, open Variables and make a collection for
-                  typography tokens and another for color tokens.
+                  In your Figma file, run the
+                  <b>Website Style Token Importer</b> plugin from your class
+                  team plugins.
                 </p>
               </div>
               <div class="instruction-item">
-                <p class="mapping-token">2. Add token names exactly</p>
+                <p class="mapping-token">2. Paste Step 3 export and import</p>
                 <p>
-                  Create each variable using the token name shown here, such as
-                  `font/family/heading` or `color/text/primary`.
+                  Copy the token list from Step 3, paste it into the plugin,
+                  then click Import.
                 </p>
               </div>
               <div class="instruction-item">
-                <p class="mapping-token">3. Enter values carefully</p>
+                <p class="mapping-token">3. What the plugin creates</p>
                 <p>
-                  Paste or type the matching value for each token. Font names
-                  should use the exact Google Fonts spelling, including spaces.
+                  The plugin creates variables first, then creates text and
+                  color styles that use those variables.
                 </p>
               </div>
               <div class="instruction-item">
-                <p class="mapping-token">4. Turn variables into styles</p>
+                <p class="mapping-token">4. How to update values later</p>
                 <p>
-                  After your variables are set, make text styles and color
-                  styles in Figma that use these variable values in real UI
-                  elements.
+                  You can either fill out this form again and re-import, or
+                  edit variable values directly in Figma.
+                </p>
+              </div>
+              <div class="instruction-item">
+                <p class="mapping-token">Side note: extra token lines</p>
+                <p>
+                  You can add more `name=value` lines before importing. If the
+                  token name starts with `font/` or `color/` and uses slash
+                  syntax, the plugin will create those variables too.
                 </p>
               </div>
             </div>
@@ -761,29 +859,28 @@
 
           <section class="summary-card">
             <div class="subheading-row">
-              <h2>Likely Figma collections</h2>
+              <h2>Plugin output overview</h2>
             </div>
             <div class="mapping-list">
               <div class="mapping-item">
-                <p class="mapping-token">Typography collection</p>
+                <p class="mapping-token">Typography variables and text styles</p>
                 <p>
-                  Add your `font/family/*` values to a typography-related
-                  variable collection, then make text styles for headings and
-                  body text.
+                  `font/family/*` tokens become typography variables, and the
+                  plugin also creates text styles that reference those variables.
                 </p>
               </div>
               <div class="mapping-item">
-                <p class="mapping-token">Color collection</p>
+                <p class="mapping-token">Color variables and color styles</p>
                 <p>
-                  Add your `color/*` values to a color variable collection, then
-                  apply them in color styles or directly in components.
+                  `color/*` tokens become color variables, and color styles are
+                  generated so those values can be applied in UI elements.
                 </p>
               </div>
               <div class="mapping-item">
-                <p class="mapping-token">Future collections</p>
+                <p class="mapping-token">Extra tokens you add</p>
                 <p>
-                  You can expand this system later with spacing, radius, shadow,
-                  or image treatment tokens.
+                  If you add extra `font/` or `color/` slash-named token lines,
+                  those variables are created too.
                 </p>
               </div>
             </div>

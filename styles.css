@@ -25,6 +25,9 @@
   --token-color-background-primary: #fafaf7;
   --token-color-background-secondary: #f1efea;
   --token-color-action-primary: #2f6fed;
+  --token-color-action-hover: #1e56c5;
+  --token-color-action-secondary: #6b7280;
+  --token-color-action-secondary-hover: #4b5563;
 }
 
 * {
@@ -33,6 +36,7 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 18px;
 }
 
 body {
@@ -137,9 +141,9 @@ h3 {
 }
 
 .intro {
-  max-width: 60ch;
+  /* max-width: 60ch; */
   margin-bottom: 18px;
-  font-size: 1.02rem;
+  font-size: 1.223rem;
   line-height: 1.7;
   color: var(--muted);
 }
@@ -147,6 +151,11 @@ h3 {
 .note-stack {
   display: grid;
   gap: 10px;
+  font-size: 1.11rem;
+  line-height: 1.5;
+  border-left: 1px dotted #555;
+  margin-left: 1rem;
+  padding-left: 1rem;
 }
 
 .note-stack p,
@@ -527,6 +536,11 @@ h3 {
   }
 }
 
+.website-preview-grid {
+  display: grid;
+  gap: 14px;
+}
+
 .website-preview {
   padding: 22px;
   border-radius: 24px;
@@ -536,6 +550,15 @@ h3 {
     background-color 180ms ease,
     color 180ms ease,
     border-color 180ms ease;
+}
+
+.preview-card-kicker {
+  margin-bottom: 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.72;
 }
 
 .preview-brand {

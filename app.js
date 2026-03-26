@@ -44,8 +44,18 @@ const colorTokens = [
   },
   {
     name: "color/action/hover",
-    label: "Action Hover",
+    label: "Primary Action Hover",
     defaultValue: "#1E56C5",
+  },
+  {
+    name: "color/action/secondary",
+    label: "Secondary Action",
+    defaultValue: "#6B7280",
+  },
+  {
+    name: "color/action/secondary-hover",
+    label: "Secondary Action Hover",
+    defaultValue: "#4B5563",
   },
   {
     name: "color/accent",
@@ -153,8 +163,9 @@ const tokenCount = document.querySelector("#token-count");
 const contrastHints = document.querySelector("#contrast-hints");
 const copyButton = document.querySelector("#copy-button");
 const resetButton = document.querySelector("#reset-button");
-const websitePreview = document.querySelector("#website-preview");
-const previewAction = websitePreview.querySelector(".preview-action");
+const websitePreviewPrimary = document.querySelector("#website-preview-primary");
+const websitePreviewSecondary = document.querySelector("#website-preview-secondary");
+const previewActions = document.querySelectorAll(".preview-action");
 const fontDatalist = document.querySelector("#google-font-options");
 const fontCatalogStatus = document.querySelector("#font-catalog-status");
 const rootStyles = document.documentElement.style;
@@ -553,6 +564,18 @@ function updateTokenCssVariables() {
     getValidColor("color/action/primary", "#2F6FED")
   );
   rootStyles.setProperty(
+    "--token-color-action-hover",
+    getValidColor("color/action/hover", "#1E56C5")
+  );
+  rootStyles.setProperty(
+    "--token-color-action-secondary",
+    getValidColor("color/action/secondary", "#6B7280")
+  );
+  rootStyles.setProperty(
+    "--token-color-action-secondary-hover",
+    getValidColor("color/action/secondary-hover", "#4B5563")
+  );
+  rootStyles.setProperty(
     "--token-color-text-inverse",
     getValidColor("color/text/inverse", "#F9F7F2")
   );
@@ -651,35 +674,84 @@ function updateTypographyPreview() {
   });
 }
 
-function updateWebsitePreview() {
-  const bgPrimary = getValidColor("color/background/primary", "#FAFAF7");
-  const textPrimary = getValidColor("color/text/primary", "#1F1F1F");
-  const actionPrimary = getValidColor("color/action/primary", "#2F6FED");
-  const brandFont = state.values["font/family/brand"] || "Fraunces";
-  const headingFont = state.values["font/family/heading"] || "Manrope";
-  const bodyFont = state.values["font/family/body"] || "Manrope";
+function applyWebsitePreviewCard({
+  card,
+  backgroundColor,
+  textColor,
+  actionColor,
+  actionHoverColor,
+  brandFont,
+  headingFont,
+  bodyFont,
+}) {
+  if (!card) {
+    return;
+  }
 
-  websitePreview.style.background = bgPrimary;
-  websitePreview.style.color = textPrimary;
-  websitePreview.style.borderColor = getValidColor(
+  const brand = card.querySelector(".preview-brand");
+  const title = card.querySelector(".preview-title");
+  const body = card.querySelector(".preview-body");
+  const action = card.querySelector(".preview-action");
+
+  card.style.background = backgroundColor;
+  card.style.color = textColor;
+  card.style.borderColor = getValidColor(
     "color/border/subtle",
     "rgba(98, 82, 61, 0.16)"
   );
 
-  const brand = websitePreview.querySelector(".preview-brand");
-  const title = websitePreview.querySelector(".preview-title");
-  const body = websitePreview.querySelector(".preview-body");
-
   brand.style.fontFamily = formatPreviewFontFamily(brandFont, "serif");
-  brand.style.color = textPrimary;
+  brand.style.color = textColor;
   title.style.fontFamily = formatPreviewFontFamily(headingFont, "sans-serif");
+  title.style.color = textColor;
   body.style.fontFamily = formatPreviewFontFamily(bodyFont, "sans-serif");
-  title.style.color = textPrimary;
-  body.style.color = textPrimary;
-  previewAction.style.backgroundColor = actionPrimary;
-  previewAction.style.color = getValidColor("color/text/inverse", "#FFFFFF");
-  previewAction.dataset.baseColor = actionPrimary;
-  previewAction.dataset.hoverColor = getValidColor("color/action/hover", "#1E56C5");
+  body.style.color = textColor;
+
+  action.style.backgroundColor = actionColor;
+  action.style.color = getValidColor("color/text/inverse", "#FFFFFF");
+  action.dataset.baseColor = actionColor;
+  action.dataset.hoverColor = actionHoverColor;
+}
+
+function updateWebsitePreview() {
+  const bgPrimary = getValidColor("color/background/primary", "#FAFAF7");
+  const textPrimary = getValidColor("color/text/primary", "#1F1F1F");
+  const actionPrimary = getValidColor("color/action/primary", "#2F6FED");
+  const actionPrimaryHover = getValidColor("color/action/hover", "#1E56C5");
+
+  const bgSecondary = getValidColor("color/background/secondary", "#F1EFEA");
+  const textSecondary = getValidColor("color/text/secondary", "#5A5A5A");
+  const actionSecondary = getValidColor("color/action/secondary", "#6B7280");
+  const actionSecondaryHover = getValidColor(
+    "color/action/secondary-hover",
+    "#4B5563"
+  );
+
+  const brandFont = state.values["font/family/brand"] || "Fraunces";
+  const headingFont = state.values["font/family/heading"] || "Manrope";
+  const bodyFont = state.values["font/family/body"] || "Manrope";
+
+  applyWebsitePreviewCard({
+    card: websitePreviewPrimary,
+    backgroundColor: bgPrimary,
+    textColor: textPrimary,
+    actionColor: actionPrimary,
+    actionHoverColor: actionPrimaryHover,
+    brandFont: brandFont,
+    headingFont: headingFont,
+    bodyFont: bodyFont,
+  });
+
+  applyWebsitePreviewCard({
+    card: websitePreviewSecondary,
+    backgroundColor: bgSecondary,
+    textColor: textSecondary,
+    actionColor: actionSecondary,
+    actionHoverColor: actionSecondaryHover,
+    brandFont: brandFont,
+    headingFont: headingFont,
+    bodyFont: bodyFont,
+  });
 }
 
 function toRgb(hex) {
@@ -918,12 +990,15 @@ function bindControls() {
   exportModeSelect.addEventListener("change", updateUI);
   copyButton.addEventListener("click", copyExport);
   resetButton.addEventListener("click", resetForm);
-  previewAction.addEventListener("click", (event) => event.preventDefault());
-  previewAction.addEventListener("mouseenter", () => {
-    previewAction.style.backgroundColor = previewAction.dataset.hoverColor;
-  });
-  previewAction.addEventListener("mouseleave", () => {
-    previewAction.style.backgroundColor = previewAction.dataset.baseColor;
+
+  previewActions.forEach((action) => {
+    action.addEventListener("click", (event) => event.preventDefault());
+    action.addEventListener("mouseenter", () => {
+      action.style.backgroundColor = action.dataset.hoverColor;
+    });
+    action.addEventListener("mouseleave", () => {
+      action.style.backgroundColor = action.dataset.baseColor;
+    });
   });
 }
 
@@ -952,6 +1027,7 @@ function runInteractionTests() {
     heading: getFontInput("font/family/heading").value,
     body: getFontInput("font/family/body").value,
     action: getHexInput("color/action/primary").value,
+    actionSecondary: getHexInput("color/action/secondary").value,
     textPrimary: getHexInput("color/text/primary").value,
     bgPrimary: getHexInput("color/background/primary").value,
   };
@@ -974,15 +1050,21 @@ function runInteractionTests() {
     dispatchInput(getFontInput("font/family/body"));
     dispatchChange(getFontInput("font/family/body"));
     assertTest(
-      websitePreview.querySelector(".preview-brand").style.fontFamily.includes("Poppins"),
+      websitePreviewPrimary
+        .querySelector(".preview-brand")
+        .style.fontFamily.includes("Poppins"),
       "sample website card should use chosen brand font"
     );
     assertTest(
-      websitePreview.querySelector(".preview-title").style.fontFamily.includes("Poppins"),
+      websitePreviewPrimary
+        .querySelector(".preview-title")
+        .style.fontFamily.includes("Poppins"),
       "sample website card should use chosen heading font"
     );
     assertTest(
-      websitePreview.querySelector(".preview-body").style.fontFamily.includes("Poppins"),
+      websitePreviewPrimary
+        .querySelector(".preview-body")
+        .style.fontFamily.includes("Poppins"),
       "sample website card should use chosen body font"
     );
     results.push("font previews");
@@ -994,8 +1076,19 @@ function runInteractionTests() {
       "hex and color picker should stay in sync"
     );
     assertTest(
-      getComputedStyle(previewAction).backgroundColor === hexToRgbString("#FF5500"),
+      getComputedStyle(
+        websitePreviewPrimary.querySelector(".preview-action")
+      ).backgroundColor === hexToRgbString("#FF5500"),
       "sample action button should use primary action color"
+    );
+
+    getHexInput("color/action/secondary").value = "#006E61";
+    dispatchInput(getHexInput("color/action/secondary"));
+    assertTest(
+      getComputedStyle(
+        websitePreviewSecondary.querySelector(".preview-action")
+      ).backgroundColor === hexToRgbString("#006E61"),
+      "secondary sample action button should use secondary action color"
     );
     results.push("color sync");
 
@@ -1004,11 +1097,11 @@ function runInteractionTests() {
     getHexInput("color/background/primary").value = "#F4F1EA";
     dispatchInput(getHexInput("color/background/primary"));
     assertTest(
-      getComputedStyle(websitePreview).backgroundColor === hexToRgbString("#F4F1EA"),
+      getComputedStyle(websitePreviewPrimary).backgroundColor === hexToRgbString("#F4F1EA"),
       "sample website card should use primary background color"
     );
     assertTest(
-      getComputedStyle(websitePreview).color === hexToRgbString("#112233"),
+      getComputedStyle(websitePreviewPrimary).color === hexToRgbString("#112233"),
       "sample website card should use primary text color"
     );
     results.push("sample card colors");
@@ -1037,6 +1130,7 @@ function runInteractionTests() {
     resetForm();
     assertTest(
       getHexInput("color/action/primary").value === defaults.action &&
+        getHexInput("color/action/secondary").value === defaults.actionSecondary &&
         getFontInput("font/family/body").value === defaults.body &&
         exportModeSelect.value === "plain",
       "reset should restore form defaults"
