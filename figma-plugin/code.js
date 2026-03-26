@@ -197,6 +197,7 @@ async function importTokenText({ text, collectionName, options }) {
   if (options.createTextStyles) {
     const textStyleReport = await createTextStylesFromTokens({
       tokenLookup,
+      variableMap,
       options,
       report,
     });
@@ -370,7 +371,12 @@ async function createColorStylesFromTokens({ tokenLookup, variableMap, report })
   return styleReport;
 }
 
-async function createTextStylesFromTokens({ tokenLookup, options, report }) {
+async function createTextStylesFromTokens({
+  tokenLookup,
+  variableMap,
+  options,
+  report,
+}) {
   const styleReport = { created: 0, updated: 0, skipped: 0 };
 
   const brandFamily = getTokenStringValue(tokenLookup, "font/family/brand");
@@ -458,6 +464,8 @@ async function createTextStylesFromTokens({ tokenLookup, options, report }) {
     for (const roleConfig of roleConfigs) {
       const styleName = `${setConfig.prefix}/${roleConfig.role}`;
       const familyName = requiredFamilies[roleConfig.familyKey];
+      const familyVariableName = `font/family/${roleConfig.familyKey}`;
+      const familyVariable = variableMap.get(familyVariableName) || null;
 
       if (!familyName) {
         styleReport.skipped += 1;
@@ -511,6 +519,7 @@ async function createTextStylesFromTokens({ tokenLookup, options, report }) {
         fontSize: fontSize,
         lineHeightPx: lineHeightPx,
         description: `Generated ${roleConfig.weightClass} ${roleConfig.role} style from token importer.`,
+        fontFamilyVariable: familyVariable,
       });
 
       if (result.status === "error") {
@@ -520,6 +529,13 @@ async function createTextStylesFromTokens({ tokenLookup, options, report }) {
           message: `Text style "${styleName}": ${result.message}`,
         });
         continue;
+      }
+
+      if (result.warning) {
+        report.warnings.push({
+          lineNumber: null,
+          message: `Text style "${styleName}": ${result.warning}`,
+        });
       }
 
       if (result.status === "created") {
@@ -686,6 +702,10 @@ async function createOrUpdateVariable({
   }
 
   const variable = figma.variables.createVariable(name, collection.id, type);
+  // Register immediately so downstream style binding can still find this variable
+  // even if setting its initial value fails on this pass.
+  variableMap.set(name, variable);
+
   const setResult = await setVariableValueSafely({
     variable: variable,
     modeId: modeId,
@@ -696,7 +716,6 @@ async function createOrUpdateVariable({
   if (setResult.status === "error") {
     return setResult;
   }
-  variableMap.set(name, variable);
   return { status: "created" };
 }
 
@@ -898,9 +917,11 @@ async function createOrUpdateTextStyle({
   fontSize,
   lineHeightPx,
   description,
+  fontFamilyVariable,
 }) {
   const styleResult = findOrCreateTextStyle(styleMap, name);
   const style = styleResult.style;
+  let warning = null;
 
   try {
     style.fontName = fontName;
@@ -910,6 +931,18 @@ async function createOrUpdateTextStyle({
       value: lineHeightPx,
     };
     style.description = description;
+
+    if (fontFamilyVariable && fontFamilyVariable.resolvedType === "STRING") {
+      if (typeof style.setBoundVariable === "function") {
+        style.setBoundVariable("fontFamily", fontFamilyVariable);
+      } else {
+        warning = "Font family variable binding is unavailable in this Figma version.";
+      }
+    } else if (fontFamilyVariable) {
+      warning = `Could not bind font family variable because "${fontFamilyVariable.name}" is not STRING type.`;
+    } else {
+      warning = "Matching font family variable was not found for binding.";
+    }
   } catch (error) {
     return {
       status: "error",
@@ -922,5 +955,6 @@ async function createOrUpdateTextStyle({
 
   return {
     status: styleResult.created ? "created" : "updated",
+    warning: warning,
   };
 }
