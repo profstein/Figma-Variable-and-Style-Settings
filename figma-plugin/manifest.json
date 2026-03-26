@@ -1,8 +1,12 @@
 {
-  "name": "Website Token Variable Importer",
+  "name": "Website Token Variable + Style Importer",
   "id": "com.bmcc.website-token-variable-importer",
   "api": "1.0.0",
   "editorType": ["figma"],
   "main": "code.js",
-  "ui": "ui.html"
+  "ui": "ui.html",
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
 }
