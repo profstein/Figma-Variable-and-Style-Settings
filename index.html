@@ -274,7 +274,7 @@
                         class="token-input color-picker"
                         type="color"
                         data-token="color/text/secondary"
-                        value="#5A5A5A"
+                        value="#F1EFEA"
                       />
                     </label>
                     <label class="field-label hex-field-label" for="color-text-secondary-hex">
@@ -284,7 +284,7 @@
                         class="token-input hex-input"
                         type="text"
                         data-token="color/text/secondary"
-                        value="#5A5A5A"
+                        value="#F1EFEA"
                         inputmode="text"
                         spellcheck="false"
                       />
@@ -313,7 +313,7 @@
                         class="token-input color-picker"
                         type="color"
                         data-token="color/background/secondary"
-                        value="#F1EFEA"
+                        value="#5A5A5A"
                       />
                     </label>
                     <label class="field-label hex-field-label" for="color-background-secondary-hex">
@@ -323,7 +323,7 @@
                         class="token-input hex-input"
                         type="text"
                         data-token="color/background/secondary"
-                        value="#F1EFEA"
+                        value="#5A5A5A"
                         inputmode="text"
                         spellcheck="false"
                       />
@@ -431,7 +431,7 @@
                         class="token-input color-picker"
                         type="color"
                         data-token="color/action/secondary"
-                        value="#6B7280"
+                        value="#669C35"
                       />
                     </label>
                     <label class="field-label hex-field-label" for="color-action-secondary-hex">
@@ -441,7 +441,7 @@
                         class="token-input hex-input"
                         type="text"
                         data-token="color/action/secondary"
-                        value="#6B7280"
+                        value="#669C35"
                         inputmode="text"
                         spellcheck="false"
                       />
@@ -470,7 +470,7 @@
                         class="token-input color-picker"
                         type="color"
                         data-token="color/action/secondary-hover"
-                        value="#4B5563"
+                        value="#38571A"
                       />
                     </label>
                     <label class="field-label hex-field-label" for="color-action-secondary-hover-hex">
@@ -480,7 +480,7 @@
                         class="token-input hex-input"
                         type="text"
                         data-token="color/action/secondary-hover"
-                        value="#4B5563"
+                        value="#38571A"
                         inputmode="text"
                         spellcheck="false"
                       />
@@ -807,6 +807,32 @@
               readonly
               aria-label="Exported design tokens"
             ></textarea>
+            <div class="plugin-output-overview">
+              <h3>Plugin output overview</h3>
+              <div class="mapping-list">
+                <div class="mapping-item">
+                  <p class="mapping-token">Typography variables and text styles</p>
+                  <p>
+                    `font/family/*` tokens become typography variables, and the
+                    plugin also creates text styles that reference those variables.
+                  </p>
+                </div>
+                <div class="mapping-item">
+                  <p class="mapping-token">Color variables and color styles</p>
+                  <p>
+                    `color/*` tokens become color variables, and color styles are
+                    generated so those values can be applied in UI elements.
+                  </p>
+                </div>
+                <div class="mapping-item">
+                  <p class="mapping-token">Extra tokens you add</p>
+                  <p>
+                    If you add extra `font/` or `color/` slash-named token lines,
+                    those variables are created too.
+                  </p>
+                </div>
+              </div>
+            </div>
           </section>
 
           <section class="summary-card">
@@ -857,34 +883,6 @@
             </div>
           </section>
 
-          <section class="summary-card">
-            <div class="subheading-row">
-              <h2>Plugin output overview</h2>
-            </div>
-            <div class="mapping-list">
-              <div class="mapping-item">
-                <p class="mapping-token">Typography variables and text styles</p>
-                <p>
-                  `font/family/*` tokens become typography variables, and the
-                  plugin also creates text styles that reference those variables.
-                </p>
-              </div>
-              <div class="mapping-item">
-                <p class="mapping-token">Color variables and color styles</p>
-                <p>
-                  `color/*` tokens become color variables, and color styles are
-                  generated so those values can be applied in UI elements.
-                </p>
-              </div>
-              <div class="mapping-item">
-                <p class="mapping-token">Extra tokens you add</p>
-                <p>
-                  If you add extra `font/` or `color/` slash-named token lines,
-                  those variables are created too.
-                </p>
-              </div>
-            </div>
-          </section>
       </main>
     </div>
 

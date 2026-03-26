@@ -30,12 +30,12 @@ const colorTokens = [
   {
     name: "color/text/secondary",
     label: "Secondary Text",
-    defaultValue: "#5A5A5A",
+    defaultValue: "#F1EFEA",
   },
   {
     name: "color/background/secondary",
     label: "Secondary Background",
-    defaultValue: "#F1EFEA",
+    defaultValue: "#5A5A5A",
   },
   {
     name: "color/action/primary",
@@ -50,12 +50,12 @@ const colorTokens = [
   {
     name: "color/action/secondary",
     label: "Secondary Action",
-    defaultValue: "#6B7280",
+    defaultValue: "#669C35",
   },
   {
     name: "color/action/secondary-hover",
     label: "Secondary Action Hover",
-    defaultValue: "#4B5563",
+    defaultValue: "#38571A",
   },
   {
     name: "color/accent",
@@ -553,11 +553,11 @@ function updateTokenCssVariables() {
   );
   rootStyles.setProperty(
     "--token-color-text-secondary",
-    getValidColor("color/text/secondary", "#5A5A5A")
+    getValidColor("color/text/secondary", "#F1EFEA")
   );
   rootStyles.setProperty(
     "--token-color-background-secondary",
-    getValidColor("color/background/secondary", "#F1EFEA")
+    getValidColor("color/background/secondary", "#5A5A5A")
   );
   rootStyles.setProperty(
     "--token-color-action-primary",
@@ -569,11 +569,11 @@ function updateTokenCssVariables() {
   );
   rootStyles.setProperty(
     "--token-color-action-secondary",
-    getValidColor("color/action/secondary", "#6B7280")
+    getValidColor("color/action/secondary", "#669C35")
   );
   rootStyles.setProperty(
     "--token-color-action-secondary-hover",
-    getValidColor("color/action/secondary-hover", "#4B5563")
+    getValidColor("color/action/secondary-hover", "#38571A")
   );
   rootStyles.setProperty(
     "--token-color-text-inverse",
@@ -719,12 +719,12 @@ function updateWebsitePreview() {
   const actionPrimary = getValidColor("color/action/primary", "#2F6FED");
   const actionPrimaryHover = getValidColor("color/action/hover", "#1E56C5");
 
-  const bgSecondary = getValidColor("color/background/secondary", "#F1EFEA");
-  const textSecondary = getValidColor("color/text/secondary", "#5A5A5A");
-  const actionSecondary = getValidColor("color/action/secondary", "#6B7280");
+  const bgSecondary = getValidColor("color/background/secondary", "#5A5A5A");
+  const textSecondary = getValidColor("color/text/secondary", "#F1EFEA");
+  const actionSecondary = getValidColor("color/action/secondary", "#669C35");
   const actionSecondaryHover = getValidColor(
     "color/action/secondary-hover",
-    "#4B5563"
+    "#38571A"
   );
 
   const brandFont = state.values["font/family/brand"] || "Fraunces";
@@ -800,8 +800,8 @@ function updateContrastHints() {
     {
       key: "secondary-on-secondary",
       title: "Secondary text | background",
-      foreground: getValidColor("color/text/secondary", "#5A5A5A"),
-      background: getValidColor("color/background/secondary", "#F1EFEA"),
+      foreground: getValidColor("color/text/secondary", "#F1EFEA"),
+      background: getValidColor("color/background/secondary", "#5A5A5A"),
       recommended: 4.5,
     },
     {

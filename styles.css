@@ -20,14 +20,14 @@
   --font-body: "Source Sans 3", "Segoe UI", sans-serif;
   --token-font-body: "Source Sans 3", "Segoe UI", sans-serif;
   --token-color-text-primary: #1f1f1f;
-  --token-color-text-secondary: #5a5a5a;
+  --token-color-text-secondary: #f1efea;
   --token-color-text-inverse: #f9f7f2;
   --token-color-background-primary: #fafaf7;
-  --token-color-background-secondary: #f1efea;
+  --token-color-background-secondary: #5a5a5a;
   --token-color-action-primary: #2f6fed;
   --token-color-action-hover: #1e56c5;
-  --token-color-action-secondary: #6b7280;
-  --token-color-action-secondary-hover: #4b5563;
+  --token-color-action-secondary: #669c35;
+  --token-color-action-secondary-hover: #38571a;
 }
 
 * {
@@ -558,7 +558,19 @@ h3 {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: var(--accent);
   opacity: 0.72;
+}
+
+.plugin-output-overview {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.plugin-output-overview h3 {
+  margin: 0 0 10px;
+  font-size: 1.02rem;
 }
 
 .preview-brand {
