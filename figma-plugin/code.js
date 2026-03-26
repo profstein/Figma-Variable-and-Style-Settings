@@ -701,7 +701,7 @@ async function createOrUpdateVariable({
     return { status: "updated" };
   }
 
-  const variable = figma.variables.createVariable(name, collection.id, type);
+  const variable = figma.variables.createVariable(name, collection, type);
   // Register immediately so downstream style binding can still find this variable
   // even if setting its initial value fails on this pass.
   variableMap.set(name, variable);
