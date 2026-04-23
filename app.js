@@ -189,6 +189,10 @@ function getTokenMessage(tokenName) {
   return document.querySelector(`[data-token-message="${tokenName}"]`);
 }
 
+function getFontSuggestionsNode(tokenName) {
+  return document.querySelector(`[data-token-suggestions="${tokenName}"]`);
+}
+
 function normalizeHex(value) {
   const cleaned = value.startsWith("#") ? value : `#${value}`;
   return cleaned.toUpperCase();
@@ -237,9 +241,17 @@ function loadGoogleFontsCatalog() {
 }
 
 function populateFontDatalist() {
+  populateFontDatalistForQuery("");
+}
+
+function populateFontDatalistForQuery(queryValue) {
+  const query = normalizeFontWhitespace(queryValue || "");
+  const visibleFonts = query
+    ? getMatchingGoogleFonts(query).slice(0, 24)
+    : googleFontSuggestions.slice(0, 24);
   const options = document.createDocumentFragment();
 
-  googleFontSuggestions.forEach((fontName) => {
+  visibleFonts.forEach((fontName) => {
     const option = document.createElement("option");
     option.value = fontName;
     options.appendChild(option);
@@ -247,6 +259,56 @@ function populateFontDatalist() {
 
   fontDatalist.innerHTML = "";
   fontDatalist.appendChild(options);
+}
+
+function hideFontSuggestions(tokenName) {
+  const node = getFontSuggestionsNode(tokenName);
+  if (!node) {
+    return;
+  }
+
+  node.hidden = true;
+  node.innerHTML = "";
+}
+
+function hideAllFontSuggestions() {
+  typographyTokens.forEach((token) => {
+    hideFontSuggestions(token.name);
+  });
+}
+
+function renderFontSuggestions(tokenName, rawValue) {
+  const node = getFontSuggestionsNode(tokenName);
+  if (!node) {
+    return;
+  }
+
+  const value = normalizeFontWhitespace(rawValue || "");
+  const matches = value
+    ? getMatchingGoogleFonts(value).slice(0, 8)
+    : googleFontSuggestions.slice(0, 8);
+  const canonical = getCanonicalGoogleFontName(value);
+
+  if (matches.length === 0 || (canonical && matches.length === 1)) {
+    hideFontSuggestions(tokenName);
+    return;
+  }
+
+  node.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+
+  matches.forEach((fontName) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "font-suggestion-button";
+    button.dataset.fontSuggestion = fontName;
+    button.dataset.token = tokenName;
+    button.textContent = fontName;
+    fragment.appendChild(button);
+  });
+
+  node.appendChild(fragment);
+  node.hidden = false;
 }
 
 function syncStateFromDom() {
@@ -343,6 +405,8 @@ function setFontStatus(tokenName, tone, message) {
 
 function setFontStatusFromInput(tokenName, rawValue) {
   const value = normalizeFontWhitespace(rawValue);
+  populateFontDatalistForQuery(value);
+  renderFontSuggestions(tokenName, value);
 
   if (!value) {
     setFontStatus(
@@ -709,6 +773,7 @@ function applyWebsitePreviewCard({
 
   action.style.backgroundColor = actionColor;
   action.style.color = getValidColor("color/text/inverse", "#FFFFFF");
+  action.style.fontFamily = formatPreviewFontFamily(bodyFont, "sans-serif");
   action.dataset.baseColor = actionColor;
   action.dataset.hoverColor = actionHoverColor;
 }
@@ -976,7 +1041,9 @@ function handleFormChange(event) {
     const normalized = normalizeFontWhitespace(target.value);
     const canonicalName = getCanonicalGoogleFontName(normalized);
     target.value = canonicalName || normalized;
+    populateFontDatalistForQuery(target.value);
     validateFontToken(target.dataset.token);
+    renderFontSuggestions(target.dataset.token, target.value);
     updateUI();
     return;
   }
@@ -987,6 +1054,38 @@ function handleFormChange(event) {
 function bindControls() {
   tokenForm.addEventListener("input", handleFormInput);
   tokenForm.addEventListener("change", handleFormChange);
+  tokenForm.addEventListener("focusin", (event) => {
+    const target = event.target;
+    if (target.matches(".font-input[data-token]")) {
+      populateFontDatalistForQuery(target.value);
+      renderFontSuggestions(target.dataset.token, target.value);
+    }
+  });
+  tokenForm.addEventListener("focusout", (event) => {
+    const target = event.target;
+    if (target.matches(".font-input[data-token]")) {
+      window.setTimeout(() => {
+        if (!document.activeElement || !document.activeElement.matches(".font-suggestion-button")) {
+          hideFontSuggestions(target.dataset.token);
+        }
+      }, 80);
+    }
+  });
+  tokenForm.addEventListener("mousedown", (event) => {
+    const suggestion = event.target.closest(".font-suggestion-button");
+    if (!suggestion) {
+      return;
+    }
+
+    event.preventDefault();
+    const tokenName = suggestion.dataset.token;
+    const input = getFontInput(tokenName);
+    input.value = suggestion.dataset.fontSuggestion;
+    populateFontDatalistForQuery(input.value);
+    hideFontSuggestions(tokenName);
+    validateFontToken(tokenName);
+    updateUI();
+  });
   exportModeSelect.addEventListener("change", updateUI);
   copyButton.addEventListener("click", copyExport);
   resetButton.addEventListener("click", resetForm);
@@ -1066,6 +1165,18 @@ function runInteractionTests() {
         .querySelector(".preview-body")
         .style.fontFamily.includes("Poppins"),
       "sample website card should use chosen body font"
+    );
+    assertTest(
+      websitePreviewPrimary
+        .querySelector(".preview-action")
+        .style.fontFamily.includes("Poppins"),
+      "primary action button should use chosen body font"
+    );
+    assertTest(
+      websitePreviewSecondary
+        .querySelector(".preview-action")
+        .style.fontFamily.includes("Poppins"),
+      "secondary action button should use chosen body font"
     );
     results.push("font previews");
 
@@ -1150,6 +1261,7 @@ function runInteractionTests() {
 function init() {
   loadGoogleFontsCatalog();
   populateFontDatalist();
+  hideAllFontSuggestions();
   initializeFontStatuses();
   bindControls();
   typographyTokens.forEach((token) => validateFontToken(token.name));

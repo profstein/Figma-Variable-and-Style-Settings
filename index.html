@@ -77,13 +77,15 @@
                     Loading local Google Fonts catalog...
                   </p>
                 </div>
-                <p class="section-caption">
-                  Start typing a Google Font name and choose from the
-                  suggestions so the spelling matches what you will use in
-                  Figma.
-                </p>
               </div>
               <div id="typography-fields" class="field-grid">
+                <div class="instructions">
+                  <p>
+                    Start typing a Google Font name and choose from the
+                    suggestions so the spelling matches what you will use in
+                    Figma.
+                  </p>
+                </div>
                 <article class="token-card" data-token-card="font/family/brand">
                   <div class="token-meta">
                     <span class="token-name">font/family/brand</span>
@@ -93,19 +95,25 @@
                       title.
                     </p>
                   </div>
-                  <label class="field-label" for="font-family-brand">
-                    <span>Value</span>
-                    <input
-                      id="font-family-brand"
-                      class="token-input font-input"
-                      type="text"
-                      data-token="font/family/brand"
-                      value="Playfair Display"
-                      placeholder="Playfair Display"
-                      list="google-font-options"
-                      autocomplete="off"
-                    />
-                  </label>
+                  <div class="font-input-wrap">
+                    <label class="field-label" for="font-family-brand">
+                      <span>Value</span>
+                      <input
+                        id="font-family-brand"
+                        class="token-input font-input"
+                        type="text"
+                        data-token="font/family/brand"
+                        value="Playfair Display"
+                        placeholder="Playfair Display"
+                        autocomplete="off"
+                      />
+                    </label>
+                    <div
+                      class="font-suggestions"
+                      data-token-suggestions="font/family/brand"
+                      hidden
+                    ></div>
+                  </div>
                   <p
                     class="validation-message font-validation-message"
                     data-token-message="font/family/brand"
@@ -121,19 +129,25 @@
                       The main font used for page headings and section headings.
                     </p>
                   </div>
-                  <label class="field-label" for="font-family-heading">
-                    <span>Value</span>
-                    <input
-                      id="font-family-heading"
-                      class="token-input font-input"
-                      type="text"
-                      data-token="font/family/heading"
-                      value="Inter"
-                      placeholder="Inter"
-                      list="google-font-options"
-                      autocomplete="off"
-                    />
-                  </label>
+                  <div class="font-input-wrap">
+                    <label class="field-label" for="font-family-heading">
+                      <span>Value</span>
+                      <input
+                        id="font-family-heading"
+                        class="token-input font-input"
+                        type="text"
+                        data-token="font/family/heading"
+                        value="Inter"
+                        placeholder="Inter"
+                        autocomplete="off"
+                      />
+                    </label>
+                    <div
+                      class="font-suggestions"
+                      data-token-suggestions="font/family/heading"
+                      hidden
+                    ></div>
+                  </div>
                   <p
                     class="validation-message font-validation-message"
                     data-token-message="font/family/heading"
@@ -149,19 +163,25 @@
                       The font used for paragraph text and most reading text.
                     </p>
                   </div>
-                  <label class="field-label" for="font-family-body">
-                    <span>Value</span>
-                    <input
-                      id="font-family-body"
-                      class="token-input font-input"
-                      type="text"
-                      data-token="font/family/body"
-                      value="Source Sans 3"
-                      placeholder="Source Sans 3"
-                      list="google-font-options"
-                      autocomplete="off"
-                    />
-                  </label>
+                  <div class="font-input-wrap">
+                    <label class="field-label" for="font-family-body">
+                      <span>Value</span>
+                      <input
+                        id="font-family-body"
+                        class="token-input font-input"
+                        type="text"
+                        data-token="font/family/body"
+                        value="Source Sans 3"
+                        placeholder="Source Sans 3"
+                        autocomplete="off"
+                      />
+                    </label>
+                    <div
+                      class="font-suggestions"
+                      data-token-suggestions="font/family/body"
+                      hidden
+                    ></div>
+                  </div>
                   <p
                     class="validation-message font-validation-message"
                     data-token-message="font/family/body"
@@ -782,11 +802,11 @@
 
         </aside>
 
-        <section class="summary-card">
-              <div class="subheading-row export-toolbar">
-              <div>
-                <p class="section-kicker">Step 3</p>
-                <h2>Export tokens</h2>
+	        <section class="summary-card step-three-card">
+	              <div class="subheading-row export-toolbar">
+	              <div>
+	                <p class="section-kicker">Step 3</p>
+	                <h2>Export tokens</h2>
               </div>
               <div class="toolbar-actions">
                 <label for="export-mode" class="visually-hidden">
@@ -801,39 +821,43 @@
                 </button>
               </div>
             </div>
-            <textarea
-              id="export-output"
-              class="export-output"
-              readonly
-              aria-label="Exported design tokens"
-            ></textarea>
-            <div class="plugin-output-overview">
-              <h3>Plugin output overview</h3>
-              <div class="mapping-list">
-                <div class="mapping-item">
-                  <p class="mapping-token">Typography variables and text styles</p>
-                  <p>
-                    `font/family/*` tokens become typography variables, and the
-                    plugin also creates text styles that reference those variables.
-                  </p>
-                </div>
-                <div class="mapping-item">
-                  <p class="mapping-token">Color variables and color styles</p>
-                  <p>
-                    `color/*` tokens become color variables, and color styles are
-                    generated so those values can be applied in UI elements.
-                  </p>
-                </div>
-                <div class="mapping-item">
-                  <p class="mapping-token">Extra tokens you add</p>
-                  <p>
-                    If you add extra `font/` or `color/` slash-named token lines,
-                    those variables are created too.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
+	            <div class="step-three-layout">
+	              <div class="export-column">
+	                <textarea
+	                  id="export-output"
+	                  class="export-output"
+	                  readonly
+	                  aria-label="Exported design tokens"
+	                ></textarea>
+	              </div>
+	              <div class="plugin-output-overview">
+	                <h3>Plugin output overview</h3>
+	                <div class="mapping-list">
+	                  <div class="mapping-item">
+	                    <p class="mapping-token">Typography variables and text styles</p>
+	                    <p>
+	                      `font/family/*` tokens become typography variables, and the
+	                      plugin also creates text styles that reference those variables.
+	                    </p>
+	                  </div>
+	                  <div class="mapping-item">
+	                    <p class="mapping-token">Color variables and color styles</p>
+	                    <p>
+	                      `color/*` tokens become color variables, and color styles are
+	                      generated so those values can be applied in UI elements.
+	                    </p>
+	                  </div>
+	                  <div class="mapping-item">
+	                    <p class="mapping-token">Extra tokens you add</p>
+	                    <p>
+	                      If you add extra `font/` or `color/` slash-named token lines,
+	                      those variables are created too.
+	                    </p>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+	          </section>
 
           <section class="summary-card">
             <div class="subheading-row">

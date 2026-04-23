@@ -223,6 +223,19 @@ h3 {
   gap: 16px;
 }
 
+.instructions {
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--line-strong);
+  background: rgba(255, 255, 255, 0.44);
+}
+
+.instructions p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 .token-card {
   padding: 18px;
   border-radius: var(--radius-lg);
@@ -256,6 +269,46 @@ h3 {
   gap: 8px;
   font-size: 0.9rem;
   font-weight: 600;
+}
+
+.font-input-wrap {
+  position: relative;
+}
+
+.font-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: #fffdf9;
+  box-shadow: 0 14px 28px rgba(74, 54, 29, 0.12);
+}
+
+.font-suggestions[hidden] {
+  display: none;
+}
+
+.font-suggestion-button {
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.font-suggestion-button:hover,
+.font-suggestion-button:focus {
+  background: rgba(31, 111, 93, 0.08);
+  outline: none;
 }
 
 .token-input,
@@ -527,6 +580,14 @@ h3 {
 }
 
 @media (min-width: 800px) {
+  .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .instructions {
+    grid-column: 1 / -1;
+  }
+
   #color-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -573,6 +634,27 @@ h3 {
   font-size: 1.02rem;
 }
 
+@media (min-width: 1061px) {
+  .step-three-card {
+    grid-column: 1 / -1;
+  }
+
+  .step-three-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
+    gap: 18px;
+    align-items: start;
+  }
+
+  .plugin-output-overview {
+    margin-top: 16px;
+    padding-top: 0;
+    padding-left: 18px;
+    border-top: 0;
+    border-left: 1px solid var(--line);
+  }
+}
+
 .preview-brand {
   margin-bottom: 12px;
   font-size: 1.05rem;
@@ -597,6 +679,7 @@ h3 {
   min-height: 42px;
   padding: 0 16px;
   border-radius: 999px;
+  font-family: var(--token-font-body);
   font-weight: 700;
   color: #ffffff;
   background: var(--accent);
@@ -718,6 +801,10 @@ h3 {
   .toolbar-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .step-three-layout {
+    display: block;
   }
 
   #export-mode,
