@@ -285,8 +285,8 @@ function renderFontSuggestions(tokenName, rawValue) {
 
   const value = normalizeFontWhitespace(rawValue || "");
   const matches = value
-    ? getMatchingGoogleFonts(value).slice(0, 8)
-    : googleFontSuggestions.slice(0, 8);
+    ? getMatchingGoogleFonts(value).slice(0, 20)
+    : googleFontSuggestions.slice(0, 20);
   const canonical = getCanonicalGoogleFontName(value);
 
   if (matches.length === 0 || (canonical && matches.length === 1)) {
@@ -499,8 +499,8 @@ function scheduleFontValidation(tokenName) {
 
 function validateFontToken(tokenName) {
   const input = getFontInput(tokenName);
-  const value = normalizeFontWhitespace(input.value);
-  input.value = value;
+  const rawValue = input.value;
+  const value = normalizeFontWhitespace(rawValue);
 
   if (!value) {
     setFontStatus(
